@@ -1,4 +1,3 @@
 # 向高效开发前进
 
-![](\imgs\stairs.png)
-
+![一步一阶梯](\assets\imgs\stairs.svg)

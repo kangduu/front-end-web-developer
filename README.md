@@ -1,3 +1,7 @@
-# 向高效开发前进
+### 错误处理与调试
 
-![一步一阶梯](/assets/imgs/stairs.png)
+- 错误捕获与处理——try/catch语句
+- 错误类型——Error对象
+- 如何在浏览器中调试——console
+- 
+

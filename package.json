@@ -1,0 +1,19 @@
+{
+  "name": "efficiency",
+  "version": "1.0.0",
+  "description": "高效开发",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kangduu/high-efficiency.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kangduu/high-efficiency/issues"
+  },
+  "homepage": "https://github.com/kangduu/high-efficiency#readme"
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMLHttpRequest</title>
+</head>
+
+<body>
+    <button id="ajax-btn" type="button">Make a requset</button>
+    <script>
+        (() => {
+            let httpRequest;
+
+            function alertComtents() {
+                console.log(httpRequest);
+                try {
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            console.log(httpRequest.responseText);
+                        } else {
+                            console.log('There was a problem with the request.');
+                        }
+                    }
+                } catch (e) {
+                    console.log('Caught Exception:' + e.descption);
+                }
+            }
+
+            function makeRequest() {
+                httpRequest = new XMLHttpRequest();
+
+                if (!httpRequest) {
+                    // todo message
+                    return false
+                }
+                httpRequest.onreadystatechange = alertComtents;
+                httpRequest.open('GET', 'http://localhost:3000/ajax');
+                httpRequest.send();
+            }
+
+            document.getElementById("ajax-btn").addEventListener("click", makeRequest)
+        })()
+    </script>
+</body>
+
+</html>

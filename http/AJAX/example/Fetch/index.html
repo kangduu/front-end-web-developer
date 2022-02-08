@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API</title>
+    <style>
+        a {
+            color:#6DAEB0
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // fetch('https://api.github.com/users/kangduu')
+        //     .then(res => res.json())
+        //     .then((json) => {
+        //         console.log(json);
+        //     });
+
+        async function fetchRequest(params) {
+            try {
+                let controller = new AbortController();
+                let signal = controller.signal;
+                signal.addEventListener('abort',
+                    () => console.log('abort!')
+                );
+
+                let response = await fetch(params || 'https://api.github.com/users/kangduu', {
+                    signal
+                })
+                controller.abort()
+                console.log(signal.aborted); 
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        // fetchRequest('http://localhost:3000/ajax');
+        fetchRequest();
+    </script>
+</body>
+
+</html>

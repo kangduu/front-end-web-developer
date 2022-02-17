@@ -1,0 +1,3 @@
+background: -webkit-linear-gradient(top, transparent 14px, #39a283 14px),-webkit-linear-gradient(left, transparent 14px, #39a283 14px);
+background-size: 15px 15px;
+background-color: #3ead8d;

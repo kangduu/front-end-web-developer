@@ -1,0 +1,32 @@
+{
+  "desc": "关于本文件的更多信息，请参考文档 https://developers.weixin.qq.com/miniprogram/dev/reference/configuration/app.html",
+  "pages": [
+    "pages/index/index",
+    "pages/myself/index"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6", 
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "list": [
+      { 
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      { 
+        "pagePath": "pages/myself/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

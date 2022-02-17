@@ -1,0 +1,2 @@
+background-color: rgb(8, 8, 30);
+opacity: 0.85;

@@ -1,5 +1,6 @@
 const path = require('path');
-// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -7,11 +8,11 @@ module.exports = {
     // 模式 "development" | "production" | "none"
     mode: "development",
     // 入口和上下文
-    // entry: "./src/index.js",
-    entry: {
-        app: './src/index.js',
-        print: './src/print.js'
-    },
+    entry: "./src/index.js",
+    // entry: {
+    //     app: './src/index.js',npm
+    //     print: './src/print.js'
+    // },
     // 输出
     output: {
         // filename: "bundle.js",
@@ -68,15 +69,26 @@ module.exports = {
                 collapseWhitespace: true // 折叠空行，输出则为一行
             }
         }),
-        new HtmlWebpackPlugin({  // Also generate a test.html
-            filename: 'print/index.html',
-            template: 'src/index.html'
-        })
+        // new HtmlWebpackPlugin({  // Also generate a test.html
+        //     filename: 'print/index.html',
+        //     template: 'src/index.html'
+        // }),
         // 将css文件抽离为单文件
-        // new MiniCssExtractPlugin({
-        //     filename: '[name].css',
-        //     chunkFilename: '[id].css'
-        // })
-    ]
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css'
+        })
+    ],
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'public')
+        },
+        client: {
+            logging: "info",
+            overlay: true,
+        },
+        compress: true,
+        port: 9000
+    }
 }
 

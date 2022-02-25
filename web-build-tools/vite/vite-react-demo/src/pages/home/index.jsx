@@ -9,20 +9,18 @@ const TagsList = [
   { name: "Algorithm", color: "#36cfc9" },
   { name: "Browser", color: "#f759ab" },
   { name: "HTTP", color: "#95de64" },
-  { name: "Node", color: "#ffca28" },
+  { name: "Node", color: "#78b361" },
   { name: "WeChat", color: "#0e932e" },
 ];
 
 export default function Home() {
   return (
     <ul className="home">
-      {TagsList.map(({ name, color }) => {
-        return (
-          <li key={name} style={{ backgroundColor: color }}>
-            {name}
-          </li>
-        );
-      })}
+      {TagsList.map(({ name, color }) => (
+        <li key={name} style={{ color }}>
+          {name}
+        </li>
+      ))}
       <li>Other</li>
     </ul>
   );

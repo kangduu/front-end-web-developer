@@ -14,17 +14,19 @@
     grid-row-gap: 6px;
     grid-column-gap: 10px;
     position: relative;
-    animation: move 1s;
+    animation: move 1s ease;
 
     li {
-        background-color: #ff0;
+        background-color: #ccc;
         color: rgba(0, 0, 0, 0.7);
         text-transform: uppercase;
-        font-weight: 600;
+        text-shadow: -2px 2px #aaa;
+        font-weight: 700;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
 
         &:last-of-type {
             grid-row-start: 1;
@@ -59,7 +61,7 @@
 
 @keyframes move {
     0% {
-        left: 100px;
+        left: 120px;
         opacity: 0.6;
     }
 

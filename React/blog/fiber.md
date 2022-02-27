@@ -6,7 +6,7 @@
 ### 目的
 
 - 为了使 react 渲染的过程可以被**中断**，可以将控制权交还给浏览器，可以让位给**高优先级的任务**，浏览器空闲后再恢复渲染。
-- 对于计算量比较大的就是计算或者 dom 计算，就不会闲的特别的卡顿，而是一帧一帧的有规律的执行任务。
+- 对于计算量比较大的 js 计算或者 dom 计算，就不会显得特别的卡顿，而是一帧一帧的有规律的执行任务。
 
 🌰 中断
 
@@ -72,15 +72,58 @@ working.next(); // y = x + b = a + b = m + n;
 
 ### 如何判断当前是否有高优先级任务？
 
-> 首先我们需要明白的是，当前 js 的环境其实并没有办法去判断是否有高优任务。
+首先我们需要明白的是，当前 js 的环境其实并没有办法去判断是否有高优任务。**🤔Question：** 那你会怎么实现或者模拟一个啦？
 
-**🤔Question：** 那你会怎么实现或者模拟一个啦？
+- 只能约定一个合理的执行时间，当超过这个执行时间，如果任务任然没有执行完成，那就中断当前任务，将控制权交还给浏览器。
 
-- 只能约定一个合理的执行时间，当超过这个执行时间，如果任务任然没有执行完成，那就中断当前任务，将控制权交还给浏览器。（普遍的显示器都是每秒 60 帧，**1000ms / 60fps = 16ms**。大概就是一帧的时间大约是 16 毫秒。）
-- [requestIdleCallback(callback\[, options\])](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback) : callback 函数将在**浏览器空闲时期**被调用。并且 callback 函数会接收到一个名为 IdleDeadline 的参数，这个参数可以获取当前空闲时间以及回调是否在超时时间前已经执行的状态。
+  普遍的显示器都是每秒 60 帧，**1000ms / 60fps = 16ms**。大概就是一帧的时间大约是 16 毫秒。
 
-<!-- TODO 00：20：50 -->
+- [requestIdleCallback(callback\[, options\])](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback) : callback 函数将在**浏览器空闲时期**被调用。
 
-## 遗留问题
+  并且 callback 函数会接收到一个名为 IdleDeadline 的参数，这个参数可以获取当前空闲时间以及回调是否在超时时间前已经执行的状态。
 
-**🤔Question：** 说说 react 是如何实现任务的中断与恢复的？
+- 浏览器在一帧内要做什么事情？
+
+  1. 处理用户输入事件
+  2. JS 的执行
+  3. requestAnimation 调用
+  4. 布局 layout
+  5. 绘制 paint
+
+  > 16ms 一帧时间内，浏览器就没有空闲时间，
+  > 即 0ms -> requestIdleCallback 将没有时间被调用
+  > 那一直都没有空闲时间啦？
+
+- 浏览器很忙怎么办？（空闲时间为 0）
+
+  [requestIdleCallback(callback\[, options\])](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback) 第二个参数 **{ timeout: 100 }**
+
+  ```js
+  window.requestIdleCallback(
+    (args) => {
+      console.log(args);
+    },
+    {
+      timeout: 100,
+      //如果指定了timeout，并且有一个正值，而回调在timeout毫秒过后还没有被调用，那么回调任务将放入事件循环中排队，即使这样做有可能对性能产生负面影响。
+    }
+  );
+  ```
+
+> > > [requestIdelCallback 的兼容性](https://caniuse.com/?search=requestIdleCallback) 很差
+
+## 说说 react 是如何实现 requestIdleCallback 的？
+
+> 通过 messageChannel 模拟实现
+
+## react 中的任务优先级？
+
+5 个优先级：
+
+1. **Immediate** 最高优先级，这个优先级的任务应该马上被执行，且不能中断；
+2. **UserBlocking** 这些任务一般是用户交互的结果，需要及时得到反馈；
+3. **Normal** 不需要用户立刻能感受到的变化，比如网络请求等；
+4. **Low** 这些任务可以被延后，但是最终也需要被执行；
+5. **Idle** 可以被无限期延后，比如 console
+
+> > > 同一级别的任务，先后顺序

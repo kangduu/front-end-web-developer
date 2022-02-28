@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 
-interface State {
-  name: String;
-}
-
-export const decoratorWithNameHeight = (height?: number) => {
-  return (WrappedComponent: any) => {
-    return class extends Component<any, State> {
-      public state: State = {
+export const decoratorWithNameHeight = (height) => {
+  return (WrappedComponent) => {
+    return class extends Component {
+      state = {
         name: "",
       };
 

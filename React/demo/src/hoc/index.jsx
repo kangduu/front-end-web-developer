@@ -1,27 +1,31 @@
-import React, { Component } from "react";
+import React from "react";
+import ExtractStateHOC from "./extractState";
+import ViewValue from "./extractState/ViewValue";
+import MixinPropsHOC from "./mixinProps";
 
-export const decoratorWithNameHeight = (height) => {
-  return (WrappedComponent) => {
-    return class extends Component {
-      state = {
-        name: "",
-      };
+export default function HOC() {
+  return (
+    <ul>
+      <h3>高阶组件</h3>
 
-      componentWillMount() {
-        let username = localStorage.getItem("myName");
-        this.setState({
-          name: username || "",
-        });
-      }
+      <h4>强化props</h4>
+      <li>
+        混入props模式：
+        <MixinPropsHOC />
+      </li>
 
-      render() {
-        return (
-          <div>
-            <WrappedComponent name={this.state.name} {...this.props} />
-            <p>身高为 {height || 0}</p>
-          </div>
-        );
-      }
-    };
-  };
-};
+      <li>
+        抽离state控制渲染：
+        <ExtractStateHOC />
+        <ViewValue />
+      </li>
+
+      <h4>控制渲染</h4>
+      <li>动态渲染：</li>
+      <li>分片渲染：</li>
+      <li>异步组件（懒加载）：</li>
+      <li>动态渲染：</li>
+      <li>动态渲染：</li>
+    </ul>
+  );
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancel Request</title>
+  </head>
+  <body>
+    <div>
+      <h3>Fetch API</h3>
+      <button type="button" id="fetchRequest">开始请求数据（fetch）</button>
+      <button type="button" id="fetchCancel">取消请求（fetch）</button>
+    </div>
+    <div>
+      <h3>XMLHttpRequest</h3>
+      <button type="button" id="xhrRequest">开始请求数据（XHR）</button>
+      <button type="button" id="xhrCancel">取消请求（XHR）</button>
+    </div>
+
+    <script type="text/javascript">
+      window.onload = function () {
+        var url = "http://127.0.0.1:3008/user";
+
+        function setAbortController() {
+          var controller = new AbortController();
+          var signal = controller.signal;
+          var cancel = function () {
+            controller.abort();
+          };
+
+          return { signal, cancel };
+        }
+
+        var cancelFetch = null;
+        document.getElementById("fetchRequest").addEventListener(
+          "click",
+          function () {
+            var { signal, cancel } = setAbortController();
+            cancelFetch = cancel;
+            const http = fetch(url, { signal }).then((res) => {
+              console.log(res);
+              return res.json();
+            });
+            http
+              .then((data) => {
+                console.log("data:", data);
+              })
+              .catch((error) => {
+                if (error.code === 20) {
+                  alert("aborted");
+                }
+                console.log("error code:", error.code);
+                console.log("error message:", error.message);
+                console.log("error name:", error.name);
+              });
+          },
+          false
+        );
+
+        document.getElementById("fetchCancel").addEventListener(
+          "click",
+          function () {
+            if (cancelFetch instanceof Function) {
+              cancelFetch();
+              cancelFetch = null;
+            }
+          },
+          false
+        );
+
+        var abortXHR = setAbortController();
+      };
+    </script>
+  </body>
+</html>

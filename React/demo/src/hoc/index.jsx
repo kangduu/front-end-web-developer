@@ -1,4 +1,5 @@
 import React from "react";
+import AuthorityController from "./AuthorityController";
 import ExtractStateHOC from "./extractState";
 import ViewValue from "./extractState/ViewValue";
 import MixinPropsHOC from "./mixinProps";
@@ -26,6 +27,13 @@ export default function HOC() {
       <li>异步组件（懒加载）：</li>
       <li>动态渲染：</li>
       <li>动态渲染：</li>
+
+      <h4>经典应用</h4>
+
+      <li>
+        权限控制:
+        <AuthorityController />
+      </li>
     </ul>
   );
 }

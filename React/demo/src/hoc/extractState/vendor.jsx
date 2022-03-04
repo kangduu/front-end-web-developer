@@ -15,7 +15,6 @@ export default function (WrapComponent) {
     }
 
     render() {
-      console.log(this.state);
       return (
         <WrapComponent
           {...this.props}

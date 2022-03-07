@@ -49,3 +49,4 @@ const EnhancedComponent = higherOrderComponent(WrappedComponent);
 ## 参考文献
 
 - [「react 进阶」一文吃透 React 高阶组件(HOC)](https://juejin.cn/post/6940422320427106335)
+- [React 高阶组件(HOC)的入门 📖 及实践 💻](https://juejin.cn/post/6844904050236850184)

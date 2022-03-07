@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { auth } from "@mock/auth";
 
-export default function (WrapComponent) {
+export default function (WrappedComponent) {
   return class extends Component {
     constructor() {
       super();
@@ -21,7 +21,7 @@ export default function (WrapComponent) {
       const authority = auth.create;
 
       return (
-        <WrapComponent
+        <WrappedComponent
           {...this.props}
           auth={authority}
           onClick={this.createUserHandler}

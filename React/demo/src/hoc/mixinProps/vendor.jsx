@@ -1,7 +1,7 @@
 import React from "react";
 
-export default function (WrapComponent) {
-  return class extends React.Component {
+export default function (WrappedComponent) {
+  class WithSubscription extends React.Component {
     state = {
       uuid: "123",
     };
@@ -9,7 +9,12 @@ export default function (WrapComponent) {
       console.log("HigherOrderComponent Mount");
     }
     render() {
-      return <WrapComponent {...this.props} {...this.state} />;
+      const newProps = { type: "HOC" };
+      return <WrappedComponent {...this.props} {...newProps} {...this.state} />;
     }
-  };
+  }
+
+  WithSubscription.displayName = `Mixins`;
+
+  return WithSubscription;
 }

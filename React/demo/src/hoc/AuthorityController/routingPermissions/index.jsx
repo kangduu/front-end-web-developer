@@ -5,7 +5,6 @@ import {
   Switch,
   Route,
   NavLink,
-  useLocation,
 } from "react-router-dom";
 
 import { getRouteAuth } from "@mock/auth";

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
-export default function (WrapComponent) {
-  return class extends Component {
+export default function (WrappedComponent) {
+  class WithSubscription extends Component {
     constructor() {
       super();
       this.state = {
@@ -16,12 +16,16 @@ export default function (WrapComponent) {
 
     render() {
       return (
-        <WrapComponent
+        <WrappedComponent
           {...this.props}
           {...this.state}
           changeValue={this.changeValue}
         />
       );
     }
-  };
+  }
+
+  WithSubscription.displayName = "ExtractState";
+
+  return WithSubscription;
 }

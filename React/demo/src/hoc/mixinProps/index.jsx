@@ -9,8 +9,11 @@ class MixinPropsHOC extends Component {
   render() {
     return (
       <>
-        <div>Demo : {this.props.uuid}</div>
-        <div>组件类型：{this.props.type}</div>
+        <h5>WrappedComponent Props:</h5>
+        <div>id:{this.props.id}</div>
+        <h5>HOC Props:</h5>
+        <div>uuid: {this.props.uuid}</div>
+        <div>type：{this.props.type}</div>
       </>
     );
   }

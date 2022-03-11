@@ -14,7 +14,7 @@ export default function (WrappedComponent) {
     }
   }
 
-  WithSubscription.displayName = `Mixins`;
+  WithSubscription.displayName = `MixinsHOC`;
 
   return WithSubscription;
 }

@@ -27,7 +27,7 @@ export default function HOC() {
         </ul>
 
         <h5>1. 混入props模式：</h5>
-        <MixinPropsHOC />
+        <MixinPropsHOC id="999" />
 
         <h5>2. 抽离state控制渲染：</h5>
         <ul>

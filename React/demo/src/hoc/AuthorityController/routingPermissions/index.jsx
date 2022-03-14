@@ -30,7 +30,6 @@ function RoutingPrimissions() {
   // 获取当前用户的权限
   const matchRouteNav = routeAuth.filter((item) => item.auth === user);
 
-  console.log(location);
   return (
     <Router>
       <div>

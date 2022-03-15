@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import HOC from "./hoc";
+import { BrowserRouter as Router } from "react-router-dom";
+import DemoTree from "./g6/index";
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <HOC />
+    {/* <Router> */}
+    <DemoTree />
+    {/* </Router> */}
   </React.StrictMode>,
   document.getElementById("root")
 );

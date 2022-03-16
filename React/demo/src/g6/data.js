@@ -47,10 +47,6 @@ const data = {
       target: "1",
     },
     {
-      source: "0",
-      target: "2",
-    },
-    {
       source: "1",
       target: "4",
     },
@@ -87,8 +83,8 @@ const data = {
       target: "9",
     },
     {
-      source: "3",
-      target: "9",
+      source: "5",
+      target: "4",
     },
   ],
 };

@@ -40,11 +40,31 @@ const data = {
       id: "9",
       label: "9",
     },
+    {
+      id: "10",
+      label: "10",
+    },
+    {
+      id: "11",
+      label: "11",
+    },
+    {
+      id: "12",
+      label: "12",
+    },
   ],
   edges: [
     {
       source: "0",
       target: "1",
+    },
+    {
+      source: "0",
+      target: "5",
+    },
+    {
+      source: "0",
+      target: "2",
     },
     {
       source: "1",
@@ -57,10 +77,6 @@ const data = {
     {
       source: "3",
       target: "4",
-    },
-    {
-      source: "4",
-      target: "5",
     },
     {
       source: "4",
@@ -85,6 +101,18 @@ const data = {
     {
       source: "5",
       target: "4",
+    },
+    {
+      source: "10",
+      target: "4",
+    },
+    {
+      source: "11",
+      target: "8",
+    },
+    {
+      source: "12",
+      target: "8",
     },
   ],
 };

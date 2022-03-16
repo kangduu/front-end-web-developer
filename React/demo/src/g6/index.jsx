@@ -9,17 +9,19 @@ const color = "#198efa";
 G6.registerNode(
   "card-node",
   {
-    options: {
-      style: {
-        fill: "red",
-      },
-      stateStyles: {
-        hover: {
-          stroke: "#198efa",
-        },
-        selected: {},
-      },
-    },
+    // ! 这个options，可以在那些生命周期获取，可用来zuoshenm？
+    // options: {
+    //   style: {
+    //     fill: "red",
+    //   },
+    //   stateStyles: {
+    //     hover: {
+    //       stroke: "#198efa",
+    //     },
+    //     selected: {},
+    //   },
+    // },
+
     /**
      * 绘制节点，包含文本
      * @param  {Object} cfg 节点的配置项
@@ -52,9 +54,9 @@ G6.registerNode(
 
       group.addShape("marker", {
         attrs: {
-          x: w / 2 + 14,
+          x: w / 2 + 15,
           y: 0,
-          r: 8,
+          r: 10,
           cursor: "pointer",
           symbol: cfg.collapsed ? G6.Marker.expand : G6.Marker.collapse,
           lineWidth: 1,
@@ -142,14 +144,72 @@ G6.registerNode(
      * @param  {Object} cfg 节点的配置项
      * @return {Array|null} 锚点（相关边的连入点）的数组,如果为 null，则没有锚点
      */
-    // getAnchorPoints(cfg) {},
+    getAnchorPoints(cfg) {
+      // console.log("getAnchorPoints", cfg);
+      // ? 设置锚点（很多锚点怎么实现？） ： https://g6.antv.vision/zh/docs/manual/middle/elements/nodes/anchorpoint
+
+      const points = new Array(100)
+        .fill(0)
+        .map((item, index) => [item, (index + 1) / 100]);
+      return [...points, [1, 0.5]];
+    },
   }
   // 继承内置节点类型的名字，例如基类 'single-node'，或 'circle', 'rect' 等
   // 当不指定该参数则代表不继承任何内置节点类型
   //   "modelRect"
 );
 
-G6.registerEdge("card-edge", {}, "polyline");
+function customPath(cfg) {
+  const { startPoint, endPoint, controlPoints } = cfg;
+
+  // return [
+  //   ["M", startPoint.x + DistanceLength - 10, startPoint.y], // 起点
+  //   ["L ", startPoint.x + DistanceLength + 10, startPoint.y], // 交点
+  //   // ["L ", startPoint.x + DistanceLength, endPoint.y], // 转点
+  //   ["L", endPoint.x - DistanceLength, endPoint.y], // 终点
+  // ];
+
+  const { x: sx, y: sy } = startPoint,
+    { x: ex, y: ey } = endPoint;
+  return [
+    ["M", sx + 30, sy],
+    ["L", sx + 60, sy],
+    ["L", sx + 60, ey],
+
+    // ["L", ex / 2 + (1 / 2) * sx, ey],
+    // ["L", ex / 2 + (1 / 2) * sx, sy],
+    // ["L", ex / 2 + (1 / 2) * sx, ey],
+    ["L", ex - 20, ey],
+  ];
+}
+
+G6.registerEdge(
+  "card-edge",
+  {
+    draw(cfg, graph) {
+      // console.log(cfg);
+      const keyShape = graph.addShape("path", {
+        attrs: {
+          startArrow: null,
+          endArrow: {
+            path: G6.Arrow.triangle(10, 10, 0),
+            fill: "#e78686",
+            radius: true,
+            d: 0,
+          },
+          path: customPath(cfg),
+          stroke: "#e78686",
+          lineWidth: 2,
+          lineAppendWidth: 2,
+        },
+        name: "path-shape",
+      });
+
+      return keyShape;
+    },
+  }
+  // "polyline"
+);
 
 export default class DemoTree extends Component {
   renderGraph(container) {
@@ -161,7 +221,7 @@ export default class DemoTree extends Component {
       container,
       width,
       height,
-      fitView: true,
+      fitView: false,
       fitCenter: true,
       fitViewPadding: 40,
       modes: {
@@ -170,30 +230,30 @@ export default class DemoTree extends Component {
       defaultNode: {
         size: [212, 95],
         type: "card-node",
-        anchorPoints: [
-          [1, 0.5],
-          [0, 0.5],
-        ],
+        // anchorPoints: [
+        //   [1, 0.5],
+        //   [0, 0.5],
+        // ],
       },
       defaultEdge: {
-        // type: "card-edge",
-        size: 1,
-        color: "#e78686",
-        style: {
-          endArrow: {
-            path: "M 0,0 L 8,4 L 8,-4 Z",
-            fill: "#e78686",
-          },
-          radius: 20,
-        },
+        type: "card-edge",
+        // size: 1,
+        // color: "#e78686",
+        // style: {
+        //   endArrow: {
+        //     path: "M 0,0 L 8,4 L 8,-4 Z",
+        //     fill: "#e78686",
+        //   },
+        //   radius: 20,
+        // },
       },
       layout: {
         type: "dagre",
         rankdir: "LR",
         align: "UL",
         controlPoints: true,
-        nodesepFunc: () => 1,
-        ranksepFunc: () => 1,
+        nodesepFunc: () => 10,
+        ranksepFunc: () => 140,
       },
     });
 
@@ -214,15 +274,17 @@ export default class DemoTree extends Component {
     });
 
     // 鼠标移动到上面 running，移出结束
-    // graph.on("node:mouseenter", (e) => {
-    //   const node = e.item;
-    //   graph.setItemState(node, "running", true);
-    // });
+    graph.on("node:mouseenter", (e) => {
+      const node = e.item;
+      if (e.target.get("name") === "rect-shape") {
+        graph.setItemState(node, "running", true);
+      }
+    });
 
-    // graph.on("node:mouseleave", (e) => {
-    //   const node = e.item;
-    //   graph.setItemState(node, "running", false);
-    // });
+    graph.on("node:mouseleave", (e) => {
+      const node = e.item;
+      graph.setItemState(node, "running", false);
+    });
   }
   componentDidMount() {
     this.renderGraph(ref.current);

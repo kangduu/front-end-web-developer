@@ -212,6 +212,62 @@ G6.registerEdge(
 );
 
 export default class DemoTree extends Component {
+  // 【折叠】点击 marker 触发
+  indentGraph = (e) => {
+    const graph = this.graph;
+    const node = e.item;
+    const { collapsed } = node.getModel();
+
+    // e.item.getOutEdges 显示修改
+    const outEdges = node.getOutEdges();
+    outEdges.forEach((edge) => {
+      // 必须先设置 visible
+      edge.changeVisibility(!collapsed);
+    });
+
+    // collapsed 为 true 的时候隐藏 ， 反之则反
+    const descendant = ((sons, collapsed) => {
+      function getSons(data, collapsed) {
+        const hasHideInEdges = (edges) =>
+          edges.every((edge) => !edge.isVisible());
+        if (collapsed) {
+          return data.filter((item) => {
+            const inEdges = item.getInEdges();
+            return inEdges.length === 1 || hasHideInEdges(inEdges);
+          });
+        }
+        return data;
+      }
+
+      const nodes = [];
+      const toggleNodes = getSons(sons, collapsed);
+      let son = toggleNodes.shift();
+
+      while (son) {
+        // 必须先设置 visible
+        son.getOutEdges().forEach((edge) => {
+          edge.changeVisibility(!collapsed);
+        });
+        nodes.push(son);
+
+        const targets = son.getNeighbors("target");
+        if (targets.length > 0) {
+          const subNodes = getSons(targets, collapsed);
+          toggleNodes.push(...subNodes);
+        }
+
+        son = toggleNodes.shift();
+      }
+      return nodes;
+    })(node.getNeighbors("target"), collapsed);
+
+    descendant.forEach((item) => {
+      item.changeVisibility(!collapsed);
+    });
+
+    // graph.layout();
+  };
+
   renderGraph(container) {
     if (!container) return;
     const width = container.scrollWidth;
@@ -265,11 +321,12 @@ export default class DemoTree extends Component {
       const node = e.item;
 
       if (e.target.get("name") === "collapse-icon") {
-        console.log(node.getModel());
         // TODO  收起展开
         node.getModel().collapsed = !node.getModel().collapsed;
         graph.setItemState(node, "collapsed", node.getModel().collapsed);
         graph.layout();
+
+        this.indentGraph(e);
       }
     });
 

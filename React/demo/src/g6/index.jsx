@@ -151,7 +151,7 @@ G6.registerNode(
       const points = new Array(100)
         .fill(0)
         .map((item, index) => [item, (index + 1) / 100]);
-      return [...points, [1, 0.5]];
+      return [...points, [1, 0.4], [1, 0.5], [1, 0.6]];
     },
   }
   // 继承内置节点类型的名字，例如基类 'single-node'，或 'circle', 'rect' 等
@@ -160,17 +160,28 @@ G6.registerNode(
 );
 
 function customPath(cfg) {
-  const { startPoint, endPoint, controlPoints } = cfg;
-
-  // return [
-  //   ["M", startPoint.x + DistanceLength - 10, startPoint.y], // 起点
-  //   ["L ", startPoint.x + DistanceLength + 10, startPoint.y], // 交点
-  //   // ["L ", startPoint.x + DistanceLength, endPoint.y], // 转点
-  //   ["L", endPoint.x - DistanceLength, endPoint.y], // 终点
-  // ];
+  // console.log("customPath", cfg);
+  const { startPoint, endPoint, controlPoints, targetNode } = cfg;
 
   const { x: sx, y: sy } = startPoint,
     { x: ex, y: ey } = endPoint;
+
+  if (sx === ex) {
+    return [
+      ["M", sx + 30, sy],
+      ["L", ex - 20, ey],
+    ];
+  }
+
+  // ! 反向：startPoint 在 endPoint 右侧，必然 sx > ex
+  // TODO return 中添加一个 inverse 参数，表示是否是流入交易，继而设置fill等属性
+  if (sx > ex) {
+    return [
+      ["M", sx - 30, sy + 10],
+      ["L", ex + 20 + 60, sy + 10],
+    ];
+  }
+
   return [
     ["M", sx + 30, sy],
     ["L", sx + 60, sy],
@@ -187,7 +198,6 @@ G6.registerEdge(
   "card-edge",
   {
     draw(cfg, graph) {
-      // console.log(cfg);
       const keyShape = graph.addShape("path", {
         attrs: {
           startArrow: null,

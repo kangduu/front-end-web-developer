@@ -29,7 +29,6 @@ G6.registerNode(
      * @return {G.Shape} 绘制的图形，通过 node.get('keyShape') 可以获取到
      */
     draw(cfg, group) {
-      //   debugger;
       const r = 4;
       const w = cfg.size[0];
       const h = cfg.size[1];
@@ -52,23 +51,24 @@ G6.registerNode(
         draggable: true,
       });
 
-      group.addShape("marker", {
-        attrs: {
-          x: w / 2 + 15,
-          y: 0,
-          r: 10,
-          cursor: "pointer",
-          symbol: cfg.collapsed ? G6.Marker.expand : G6.Marker.collapse,
-          lineWidth: 1,
-          stroke: "#fff",
-          fill: "#cccccc",
-          shadowOffsetX: 0,
-          shadowOffsetY: 5,
-          shadowColor: "rgba(21, 21, 21, 0.07)",
-          shadowBlur: 40,
-        },
-        name: "collapse-icon",
-      });
+      cfg.children &&
+        group.addShape("marker", {
+          attrs: {
+            x: w / 2 + 15,
+            y: 0,
+            r: 10,
+            cursor: "pointer",
+            symbol: cfg.collapsed ? G6.Marker.expand : G6.Marker.collapse,
+            lineWidth: 1,
+            stroke: "#fff",
+            fill: "#cccccc",
+            shadowOffsetX: 0,
+            shadowOffsetY: 5,
+            shadowColor: "rgba(21, 21, 21, 0.07)",
+            shadowBlur: 40,
+          },
+          name: "collapse-icon",
+        });
 
       if (cfg.label) {
         // 如果有文本
@@ -146,12 +146,21 @@ G6.registerNode(
      */
     getAnchorPoints(cfg) {
       // console.log("getAnchorPoints", cfg);
-      // ? 设置锚点（很多锚点怎么实现？） ： https://g6.antv.vision/zh/docs/manual/middle/elements/nodes/anchorpoint
+      // 设置锚点（很多锚点怎么实现？） ： https://g6.antv.vision/zh/docs/manual/middle/elements/nodes/anchorpoint
 
-      const points = new Array(100)
-        .fill(0)
-        .map((item, index) => [item, (index + 1) / 100]);
-      return [...points, [1, 0.4], [1, 0.5], [1, 0.6]];
+      // const points = new Array(8)
+      //   .fill(0)
+      //   .map((item, index) => [item, ((index + 1) / 15).toFixed(0)]);
+      // return [...points, [1, 0.5]];
+
+      return [
+        [0, 0.1],
+        [0, 0.3],
+        [0, 0.5],
+        [0, 0.7],
+        [0, 0.9],
+        [1, 0.5],
+      ];
     },
   }
   // 继承内置节点类型的名字，例如基类 'single-node'，或 'circle', 'rect' 等
@@ -160,8 +169,7 @@ G6.registerNode(
 );
 
 function customPath(cfg) {
-  // console.log("customPath", cfg);
-  const { startPoint, endPoint, controlPoints, targetNode } = cfg;
+  const { startPoint, endPoint, targetNode } = cfg;
 
   const { x: sx, y: sy } = startPoint,
     { x: ex, y: ey } = endPoint;
@@ -177,8 +185,8 @@ function customPath(cfg) {
   // TODO return 中添加一个 inverse 参数，表示是否是流入交易，继而设置fill等属性
   if (sx > ex) {
     return [
-      ["M", sx - 30, sy + 10],
-      ["L", ex + 20 + 60, sy + 10],
+      ["M", sx - 20, sy + 30],
+      ["L", ex + 20, sy + 30],
     ];
   }
 
@@ -224,58 +232,70 @@ G6.registerEdge(
 export default class DemoTree extends Component {
   // 【折叠】点击 marker 触发
   indentGraph = (e) => {
-    const graph = this.graph;
-    const node = e.item;
-    const { collapsed } = node.getModel();
+    try {
+      debugger;
+      const graph = this.graph;
+      const node = e.item;
+      const { collapsed } = node.getModel();
 
-    // e.item.getOutEdges 显示修改
-    const outEdges = node.getOutEdges();
-    outEdges.forEach((edge) => {
-      // 必须先设置 visible
-      edge.changeVisibility(!collapsed);
-    });
-
-    // collapsed 为 true 的时候隐藏 ， 反之则反
-    const descendant = ((sons, collapsed) => {
-      function getSons(data, collapsed) {
-        const hasHideInEdges = (edges) =>
-          edges.every((edge) => !edge.isVisible());
-        if (collapsed) {
-          return data.filter((item) => {
-            const inEdges = item.getInEdges();
-            return inEdges.length === 1 || hasHideInEdges(inEdges);
-          });
-        }
-        return data;
-      }
-
-      const nodes = [];
-      const toggleNodes = getSons(sons, collapsed);
-      let son = toggleNodes.shift();
-
-      while (son) {
+      // e.item.getOutEdges 显示修改
+      const outEdges = node.getOutEdges();
+      outEdges.forEach((edge) => {
         // 必须先设置 visible
-        son.getOutEdges().forEach((edge) => {
-          edge.changeVisibility(!collapsed);
-        });
-        nodes.push(son);
+        edge.changeVisibility(!collapsed);
+      });
 
-        const targets = son.getNeighbors("target");
-        if (targets.length > 0) {
-          const subNodes = getSons(targets, collapsed);
-          toggleNodes.push(...subNodes);
+      // collapsed 为 true 的时候隐藏 ， 反之则反
+      const descendant = ((sons, collapsed) => {
+        try {
+          function getSons(data, collapsed) {
+            const hasHideInEdges = (edges) =>
+              edges.every((edge) => !edge.isVisible());
+            if (collapsed) {
+              return data.filter((item) => {
+                const inEdges = item.getInEdges();
+                // TODO,排除反向指向自身的情况
+
+                return inEdges.length === 1 || hasHideInEdges(inEdges);
+              });
+            }
+            return data;
+          }
+
+          const nodes = [];
+          const toggleNodes = getSons(sons, collapsed);
+          let son = toggleNodes.shift();
+
+          while (son) {
+            // 必须先设置 visible
+            son.getOutEdges().forEach((edge) => {
+              edge.changeVisibility(!collapsed);
+            });
+            nodes.push(son);
+
+            const targets = son.getNeighbors("target");
+            if (targets.length > 0) {
+              const subNodes = getSons(targets, collapsed);
+              toggleNodes.push(...subNodes);
+            }
+
+            son = toggleNodes.shift();
+          }
+          return nodes;
+        } catch (error) {
+          console.log(error);
         }
+      })(node.getNeighbors("target"), collapsed);
 
-        son = toggleNodes.shift();
-      }
-      return nodes;
-    })(node.getNeighbors("target"), collapsed);
-
-    descendant.forEach((item) => {
-      item.changeVisibility(!collapsed);
-    });
-
-    // graph.layout();
+      descendant.forEach((item) => {
+        item.changeVisibility(!collapsed);
+      });
+      const { x, y } = node.getModel();
+      graph.layout();
+      node.updatePosition({ x, y });
+    } catch (error) {
+      console.log("indent error", error);
+    }
   };
 
   renderGraph(container) {
@@ -323,19 +343,19 @@ export default class DemoTree extends Component {
       },
     });
 
-    graph.data(MockData);
-    graph.render();
-    // graph.fitView();
+    graph.read(MockData);
+
+    this.graph = graph;
 
     graph.on("node:click", (e) => {
       const node = e.item;
 
       if (e.target.get("name") === "collapse-icon") {
-        // TODO  收起展开
         node.getModel().collapsed = !node.getModel().collapsed;
         graph.setItemState(node, "collapsed", node.getModel().collapsed);
         graph.layout();
 
+        // 折叠
         this.indentGraph(e);
       }
     });

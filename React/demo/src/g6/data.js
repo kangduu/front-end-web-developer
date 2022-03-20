@@ -121,4 +121,40 @@ const data = {
   ],
 };
 
+function handleData(data) {
+  const { nodes, edges } = data;
+
+  let parents = new Map(),
+    children = new Map();
+
+  edges.forEach((edge) => {
+    const { source, target } = edge;
+
+    const _parents = parents.get(target);
+    if (_parents) {
+      if (!_parents.some((item) => item === source))
+        parents.set(target, [..._parents, source]);
+    } else {
+      parents.set(target, [source]);
+    }
+
+    const _children = parents.get(source);
+    if (_children) {
+      if (!_children.some((item) => item === target))
+        children.set(source, [..._children, target]);
+    } else {
+      children.set(source, [target]);
+    }
+  });
+
+  nodes.forEach((node) => {
+    return Object.assign(node, {
+      children: children.get(node.id),
+      parents: parents.get(node.id),
+    });
+  });
+}
+
+handleData(data);
+
 export default data;

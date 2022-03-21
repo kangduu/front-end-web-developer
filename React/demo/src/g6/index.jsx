@@ -95,26 +95,6 @@ G6.registerNode(
       return rectShape;
     },
     /**
-     * 绘制后的附加操作，默认没有任何操作
-     * @param  {Object} cfg 节点的配置项
-     * @param  {G.Group} group 图形分组，节点中的图形对象的容器
-     */
-    // afterDraw(cfg, group) {},
-    /**
-     * 更新节点，包含文本
-     * @override
-     * @param  {Object} cfg 节点的配置项
-     * @param  {Node} node 节点
-     */
-    // update(cfg, node) {},
-    /**
-     * 更新节点后的操作，一般同 afterDraw 配合使用
-     * @override
-     * @param  {Object} cfg 节点的配置项
-     * @param  {Node} node 节点
-     */
-    // afterUpdate(cfg, node) {},
-    /**
      * 设置节点的状态，主要是交互状态，业务状态请在 draw 方法中实现
      * 单图形的节点仅考虑 selected、active 状态，有其他状态需求的用户自己复写这个方法
      * @param  {String} name 状态名称
@@ -168,55 +148,121 @@ G6.registerNode(
   //   "modelRect"
 );
 
-function customPath(cfg) {
-  const { startPoint, endPoint, targetNode } = cfg;
+// path direction
+function getDirection({ startPoint, endPoint }) {
+  if (startPoint && endPoint) {
+    let direction = 1;
+    const { x: sx } = startPoint,
+      { x: ex } = endPoint;
+    console.log(sx, ex);
+
+    if (sx > ex) direction = -1;
+
+    return direction;
+  }
+  return 0;
+}
+
+function getEdgeColor(cfg) {
+  // edge color
+  const EdgeColor = "#e78686";
+  const EdgeHighlightColor = "#ff4d4f";
+
+  // inverse edge color
+  const EdgeInverseColor = "#82d4b6";
+  const EdgeHighlightInverseColor = "#43f2b2";
+
+  const direction = getDirection(cfg);
+
+  const color =
+    direction > 0
+      ? {
+          color: EdgeColor,
+          highlightColor: EdgeHighlightColor,
+          endArrow: {
+            path: G6.Arrow.triangle(15, 11, 0),
+            fill: EdgeColor,
+            d: 0,
+          },
+          endArrowHighlight: {
+            path: G6.Arrow.triangle(15, 11, 0),
+            fill: EdgeHighlightColor,
+            d: 0,
+          },
+        }
+      : {
+          color: EdgeInverseColor,
+          highlightColor: EdgeHighlightInverseColor,
+          endArrow: {
+            path: G6.Arrow.triangle(15, 11, 0),
+            fill: EdgeInverseColor,
+            d: 0,
+          },
+          endArrowHighlight: {
+            path: G6.Arrow.triangle(15, 11, 0),
+            fill: EdgeHighlightInverseColor,
+            d: 0,
+          },
+        };
+
+  return color;
+}
+
+function customEdge(cfg) {
+  const { startPoint, endPoint, sourceNode } = cfg;
+
+  const direction = getDirection(cfg),
+    sDistance = 60 * direction,
+    eDistance = 50 * direction;
 
   const { x: sx, y: sy } = startPoint,
     { x: ex, y: ey } = endPoint;
 
-  if (sx === ex) {
-    return [
-      ["M", sx + 30, sy],
-      ["L", ex - 20, ey],
+  const path = ((parents, dir, sd, ed) => {
+    // 起始节点若无父节点，不显示marker，则 M 起点不一样
+    let sIndent, eIndet;
+
+    if (dir > 0) {
+      sIndent = (Array.isArray(parents) && parents.length > 0 ? 35 : 15) * dir;
+      eIndet = 20 * dir;
+    } else {
+      sIndent = (Array.isArray(parents) && parents.length > 0 ? 15 : 35) * dir;
+      eIndet = 70 * dir;
+    }
+
+    let path = [
+      ["M", sx + sIndent, sy],
+      ["L", sx + sd, sy],
+      ["L", sx + sd, ey],
+      ["L", ex - eIndet, ey],
     ];
-  }
+    if (sx === ex)
+      path = [
+        ["M", sx + sIndent, sy],
+        ["L", ex - ed, ey],
+      ];
 
-  // ! 反向：startPoint 在 endPoint 右侧，必然 sx > ex
-  // TODO return 中添加一个 inverse 参数，表示是否是流入交易，继而设置fill等属性
-  if (sx > ex) {
-    return [
-      ["M", sx - 20, sy + 30],
-      ["L", ex + 20, sy + 30],
-    ];
-  }
+    return path;
+  })(sourceNode.getModel().parents, direction, sDistance, eDistance);
 
-  return [
-    ["M", sx + 30, sy],
-    ["L", sx + 60, sy],
-    ["L", sx + 60, ey],
-
-    // ["L", ex / 2 + (1 / 2) * sx, ey],
-    // ["L", ex / 2 + (1 / 2) * sx, sy],
-    // ["L", ex / 2 + (1 / 2) * sx, ey],
-    ["L", ex - 20, ey],
-  ];
+  return path;
 }
-
 G6.registerEdge(
   "card-edge",
   {
     draw(cfg, graph) {
+      const { color } = getEdgeColor(cfg);
       const keyShape = graph.addShape("path", {
         attrs: {
           startArrow: null,
           endArrow: {
             path: G6.Arrow.triangle(10, 10, 0),
-            fill: "#e78686",
+            fill: color,
             radius: true,
             d: 0,
           },
-          path: customPath(cfg),
-          stroke: "#e78686",
+          path: customEdge(cfg),
+          stroke: color,
           lineWidth: 2,
           lineAppendWidth: 2,
         },
@@ -233,10 +279,9 @@ export default class DemoTree extends Component {
   // 【折叠】点击 marker 触发
   indentGraph = (e) => {
     try {
-      debugger;
       const graph = this.graph;
       const node = e.item;
-      const { collapsed } = node.getModel();
+      const { collapsed, x } = node.getModel();
 
       // e.item.getOutEdges 显示修改
       const outEdges = node.getOutEdges();
@@ -245,37 +290,56 @@ export default class DemoTree extends Component {
         edge.changeVisibility(!collapsed);
       });
 
+      // 目标节点和其左侧的祖先节点
+      const ancestorAtLeft = node.getNeighbors("source").filter((item) => {
+        const { x: ix } = item.getModel();
+        return ix < x;
+      });
+
       // collapsed 为 true 的时候隐藏 ， 反之则反
-      const descendant = ((sons, collapsed) => {
+      const descendantNode = ((sons, ancestor, self, collapsed) => {
         try {
-          function getSons(data, collapsed) {
-            const hasHideInEdges = (edges) =>
-              edges.every((edge) => !edge.isVisible());
+          const hasHideInEdges = (edges) =>
+            edges.every((edge) => !edge.isVisible());
+
+          const getSons = (data, parent, collapsed) => {
             if (collapsed) {
               return data.filter((item) => {
+                // if (parent.getModel().x < item.getModel().x) return true;
+                const outEdges = item.getOutEdges();
                 const inEdges = item.getInEdges();
-                // TODO,排除反向指向自身的情况
-
-                return inEdges.length === 1 || hasHideInEdges(inEdges);
+                return (
+                  (Array.isArray(outEdges) && outEdges.length === 0) ||
+                  hasHideInEdges(inEdges)
+                );
               });
             }
             return data;
-          }
+          };
 
           const nodes = [];
-          const toggleNodes = getSons(sons, collapsed);
+          const toggleNodes = getSons(sons, self, collapsed);
           let son = toggleNodes.shift();
+          ancestor.push(self);
 
           while (son) {
+            const { id, x } = son.getModel();
+            if (ancestor.some(({ x: ix, id: _id }) => id === id || ix < x)) {
+              son = toggleNodes.shift();
+              continue;
+            }
+            ancestor.push(son);
+
             // 必须先设置 visible
             son.getOutEdges().forEach((edge) => {
               edge.changeVisibility(!collapsed);
             });
+
             nodes.push(son);
 
             const targets = son.getNeighbors("target");
-            if (targets.length > 0) {
-              const subNodes = getSons(targets, collapsed);
+            if (Array.isArray(targets) && targets.length > 0) {
+              const subNodes = getSons(targets, son, collapsed);
               toggleNodes.push(...subNodes);
             }
 
@@ -285,14 +349,13 @@ export default class DemoTree extends Component {
         } catch (error) {
           console.log(error);
         }
-      })(node.getNeighbors("target"), collapsed);
+      })(node.getNeighbors("target"), ancestorAtLeft, node, collapsed);
 
-      descendant.forEach((item) => {
+      descendantNode.forEach((item) => {
         item.changeVisibility(!collapsed);
       });
-      const { x, y } = node.getModel();
       graph.layout();
-      node.updatePosition({ x, y });
+      // node.updatePosition({ x, y });
     } catch (error) {
       console.log("indent error", error);
     }
@@ -346,6 +409,13 @@ export default class DemoTree extends Component {
     graph.read(MockData);
 
     this.graph = graph;
+
+    graph.getEdges().forEach((edge) => {
+      if (edge) {
+        const direction = getDirection(edge.getModel());
+        edge.update({ direction });
+      }
+    });
 
     graph.on("node:click", (e) => {
       const node = e.item;

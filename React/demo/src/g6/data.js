@@ -1,10 +1,6 @@
 const data = {
   nodes: [
     {
-      id: "0",
-      label: "0",
-    },
-    {
       id: "1",
       label: "1",
     },
@@ -24,54 +20,14 @@ const data = {
       id: "5",
       label: "5",
     },
-    {
-      id: "6",
-      label: "6",
-    },
-    {
-      id: "7",
-      label: "7",
-    },
-    {
-      id: "8",
-      label: "8",
-    },
-    {
-      id: "9",
-      label: "9",
-    },
-    {
-      id: "10",
-      label: "10",
-    },
-    {
-      id: "11",
-      label: "11",
-    },
-    {
-      id: "12",
-      label: "12",
-    },
   ],
   edges: [
     {
-      source: "0",
-      target: "1",
-    },
-    {
-      source: "0",
-      target: "5",
-    },
-    {
-      source: "0",
+      source: "1",
       target: "2",
     },
     {
       source: "1",
-      target: "4",
-    },
-    {
-      source: "0",
       target: "3",
     },
     {
@@ -79,44 +35,16 @@ const data = {
       target: "4",
     },
     {
-      source: "4",
-      target: "6",
+      source: "3",
+      target: "5",
     },
     {
       source: "5",
-      target: "7",
+      target: "3",
     },
     {
       source: "5",
-      target: "8",
-    },
-    {
-      source: "8",
-      target: "9",
-    },
-    {
-      source: "2",
-      target: "9",
-    },
-    {
-      source: "5",
-      target: "4",
-    },
-    {
-      source: "10",
-      target: "4",
-    },
-    {
-      source: "11",
-      target: "8",
-    },
-    {
-      source: "12",
-      target: "8",
-    },
-    {
-      source: "9",
-      target: "8",
+      target: "1",
     },
   ],
 };

@@ -46,6 +46,14 @@ const data = {
       source: "5",
       target: "1",
     },
+    {
+      source: "5",
+      target: "2",
+    },
+    {
+      source: "4",
+      target: "2",
+    },
   ],
 };
 

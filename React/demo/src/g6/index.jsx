@@ -154,10 +154,8 @@ function getDirection({ startPoint, endPoint }) {
     let direction = 1;
     const { x: sx } = startPoint,
       { x: ex } = endPoint;
-    console.log(sx, ex);
 
     if (sx > ex) direction = -1;
-
     return direction;
   }
   return 0;
@@ -275,87 +273,116 @@ G6.registerEdge(
   // "polyline"
 );
 
-export default class DemoTree extends Component {
-  // 【折叠】点击 marker 触发
-  indentGraph = (e) => {
-    try {
-      const graph = this.graph;
-      const node = e.item;
-      const { collapsed, x } = node.getModel();
+class IndentManager {
+  // 获取满足添加的子元素
+  getSons(data, collapsed) {
+    const hasHideInEdges = (edges) => edges.every((edge) => !edge.isVisible());
+    const getInEdgesAtLeft = (node) =>
+      node.getInEdges().filter((edge) => {
+        const { direction } = edge.getModel();
+        return direction > 0;
+      });
+    if (collapsed) {
+      return data.filter((item) => {
+        const inEdges = getInEdgesAtLeft(item);
+        return inEdges.length === 1 || hasHideInEdges(inEdges);
+      });
+    }
+    return data;
+  }
 
-      // e.item.getOutEdges 显示修改
-      const outEdges = node.getOutEdges();
-      outEdges.forEach((edge) => {
-        // 必须先设置 visible
+  // 获取目标节点右侧的邻居
+  getNeighborsAtRight(node) {
+    const { x } = node.getModel();
+    return node.getNeighbors("target").filter((item) => {
+      const { x: rx } = item.getModel();
+      return rx > x;
+    });
+  }
+
+  // 获取目标节点左侧的父节点
+  getParentsAtLeft(node) {
+    let parents = [];
+
+    function getNeighborsAtLeft(node, container) {
+      if (!node) return;
+      const { x } = node.getModel();
+      node.getNeighbors("source").forEach((item) => {
+        const { x: ix } = item.getModel();
+        if (ix < x) {
+          container.push(item);
+          getNeighborsAtLeft(item, container);
+        }
+      });
+    }
+
+    getNeighborsAtLeft(node, parents);
+    parents.push(node);
+
+    return parents;
+  }
+
+  // 改变节点的可见性
+  getChangeVisibilityOfNode(node) {
+    if (!node) return null;
+    const resultNode = [];
+
+    const { collapsed } = node.getModel();
+
+    let ancestor = this.getParentsAtLeft(node);
+    const sons = this.getNeighborsAtRight(node);
+    let toggleNodes = this.getSons(sons, collapsed);
+    let son = toggleNodes.shift();
+
+    while (son) {
+      const { id } = son.getModel();
+      if (ancestor.some((item) => item.getModel().id === id)) {
+        son = toggleNodes.shift();
+        continue;
+      }
+
+      ancestor.push(son);
+
+      // 必须先设置 visible
+      son.getOutEdges().forEach((edge) => {
         edge.changeVisibility(!collapsed);
       });
 
-      // 目标节点和其左侧的祖先节点
-      const ancestorAtLeft = node.getNeighbors("source").filter((item) => {
-        const { x: ix } = item.getModel();
-        return ix < x;
+      const targets = this.getNeighborsAtRight(son);
+      if (Array.isArray(targets) && targets.length > 0) {
+        const subNodes = this.getSons(targets, collapsed);
+        toggleNodes.push(...subNodes);
+      }
+
+      resultNode.push(son);
+      son = toggleNodes.shift();
+    }
+
+    return resultNode;
+  }
+}
+
+export default class DemoTree extends Component {
+  indentManager = new IndentManager();
+  // 【折叠】点击 marker 触发
+  indentGraph = (e) => {
+    try {
+      const node = e.item;
+      const { collapsed } = node.getModel();
+
+      // e.item.getOutEdges 显示修改
+      node.getOutEdges().forEach((edge) => {
+        edge.changeVisibility(!collapsed); // 必须先设置 visible
       });
 
-      // collapsed 为 true 的时候隐藏 ， 反之则反
-      const descendantNode = ((sons, ancestor, self, collapsed) => {
-        try {
-          const hasHideInEdges = (edges) =>
-            edges.every((edge) => !edge.isVisible());
+      this.indentManager.getChangeVisibilityOfNode(node).forEach((node) => {
+        node.changeVisibility(!collapsed);
 
-          const getSons = (data, parent, collapsed) => {
-            if (collapsed) {
-              return data.filter((item) => {
-                // if (parent.getModel().x < item.getModel().x) return true;
-                const outEdges = item.getOutEdges();
-                const inEdges = item.getInEdges();
-                return (
-                  (Array.isArray(outEdges) && outEdges.length === 0) ||
-                  hasHideInEdges(inEdges)
-                );
-              });
-            }
-            return data;
-          };
-
-          const nodes = [];
-          const toggleNodes = getSons(sons, self, collapsed);
-          let son = toggleNodes.shift();
-          ancestor.push(self);
-
-          while (son) {
-            const { id, x } = son.getModel();
-            if (ancestor.some(({ x: ix, id: _id }) => id === id || ix < x)) {
-              son = toggleNodes.shift();
-              continue;
-            }
-            ancestor.push(son);
-
-            // 必须先设置 visible
-            son.getOutEdges().forEach((edge) => {
-              edge.changeVisibility(!collapsed);
-            });
-
-            nodes.push(son);
-
-            const targets = son.getNeighbors("target");
-            if (Array.isArray(targets) && targets.length > 0) {
-              const subNodes = getSons(targets, son, collapsed);
-              toggleNodes.push(...subNodes);
-            }
-
-            son = toggleNodes.shift();
-          }
-          return nodes;
-        } catch (error) {
-          console.log(error);
+        if (node.hasState("collapsed") && collapsed) {
+          node.getModel().collapsed = false;
+          node.setState("collapsed", false);
         }
-      })(node.getNeighbors("target"), ancestorAtLeft, node, collapsed);
-
-      descendantNode.forEach((item) => {
-        item.changeVisibility(!collapsed);
       });
-      graph.layout();
-      // node.updatePosition({ x, y });
     } catch (error) {
       console.log("indent error", error);
     }
@@ -407,14 +434,15 @@ export default class DemoTree extends Component {
     });
 
     graph.read(MockData);
-
     this.graph = graph;
 
-    graph.getEdges().forEach((edge) => {
-      if (edge) {
-        const direction = getDirection(edge.getModel());
-        edge.update({ direction });
-      }
+    graph.on("afterrender", () => {
+      graph.getEdges().forEach((edge) => {
+        if (edge) {
+          const direction = getDirection(edge.getModel());
+          edge.update({ direction });
+        }
+      });
     });
 
     graph.on("node:click", (e) => {
@@ -423,7 +451,7 @@ export default class DemoTree extends Component {
       if (e.target.get("name") === "collapse-icon") {
         node.getModel().collapsed = !node.getModel().collapsed;
         graph.setItemState(node, "collapsed", node.getModel().collapsed);
-        graph.layout();
+        // graph.layout();
 
         // 折叠
         this.indentGraph(e);

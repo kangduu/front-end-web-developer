@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import DemoTree from "./g6/index";
+import DagreLayout from "./g6/dagreLayout";
+import ScrollingLoad from "./components/scrollingLoad";
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <Router> */}
-    <DemoTree />
+    {/* <DagreLayout /> */}
+    <ScrollingLoad />
     {/* </Router> */}
   </React.StrictMode>,
   document.getElementById("root")

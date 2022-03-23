@@ -5,6 +5,7 @@
  * */
 
 // 依赖lodash库
+// TODO 自己实现元素校验
 import { isElement } from "lodash";
 
 // 创建input元素并赋值
@@ -25,10 +26,7 @@ const createElement = (value) => {
   };
 };
 
-/**
- * @param {any} value 如果是DOM元素，则复制元素中的值，否则调用createElement
- */
-export default (value) => {
+function copy(value) {
   return new Promise((resolve, reject) => {
     try {
       let remove = null;
@@ -72,4 +70,31 @@ export default (value) => {
       console.log(error.message);
     }
   });
+}
+
+/**
+ * @param {any} value 如果是DOM元素，则复制元素中的值，否则调用createElement
+ */
+export default (value) => {
+  const { writeText } = navigator.clipboard || {};
+  if (writeText instanceof Function) {
+    return new Promise((resolve, reject) => {
+      navigator.clipboard
+        .writeText(value)
+        .then(() => {
+          resolve({
+            state: true,
+            msg: "已经成功复制到剪切板",
+          });
+        })
+        .catch(() => {
+          reject({
+            state: false,
+            msg: "复制失败，请手动复制",
+          });
+        });
+    });
+  }
+
+  return copy(value);
 };

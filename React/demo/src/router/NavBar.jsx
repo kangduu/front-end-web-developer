@@ -1,7 +1,15 @@
 import React, { Component } from "react";
 import "./nav.less";
 
-const list = ["React", "Angular", "Vue.js", "Webpack", "Node.js", "Typescript"];
+const list = [
+  "React",
+  "Angular",
+  "Vue.js",
+  "Webpack",
+  "Node.js",
+  "Typescript",
+  "Demo",
+];
 
 export default function () {
   const [order, setOrder] = React.useState(0);

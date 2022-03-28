@@ -1,23 +1,30 @@
-import React, { Component } from "react";
+import React from "react";
+import { useHistory } from "react-router-dom";
 import "./nav.less";
 
 const list = [
-  "React",
-  "Angular",
-  "Vue.js",
-  "Webpack",
-  "Node.js",
-  "Typescript",
-  "Demo",
+  {
+    label: "React",
+    key: "nav-react",
+    path: "/react",
+  },
+  {
+    label: "Demo",
+    key: "nav-case",
+    path: "/case",
+  },
 ];
 
 export default function () {
+  const history = useHistory();
+
   const [order, setOrder] = React.useState(0);
   const handleClick = React.useCallback((e) => {
     const node = e.target;
     if (node.tagName.toLowerCase() === "li") {
-      const { index } = node.dataset;
+      const { index, path } = node.dataset;
       setOrder(Number(index));
+      history.push(path);
     }
   });
 
@@ -40,13 +47,14 @@ export default function () {
   return (
     <>
       <ul ref={ulRef} id="nav" onClick={handleClick}>
-        {list.map((item, index) => (
+        {list.map(({ label, key, path }, index) => (
           <li
-            key={item}
+            key={key}
             data-index={index}
+            data-path={path}
             className={order === index ? "active" : ""}
           >
-            {item}
+            {label}
           </li>
         ))}
         <div className="line" ref={lineRef} />

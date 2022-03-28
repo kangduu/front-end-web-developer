@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import NavBar from "./router/NavBar";
+import NavBar from "./router/nav";
+import Pages from "./router";
 import "./index.less";
 
 ReactDOM.render(
@@ -10,7 +11,9 @@ ReactDOM.render(
       <header id="head">
         <NavBar />
       </header>
-      <main id="content"></main>
+      <main id="content">
+        <Pages />
+      </main>
     </Router>
   </React.StrictMode>,
   document.getElementById("root")

@@ -1,28 +1,22 @@
 import React, { Component } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  NavLink,
-} from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
-export default class index extends Component {
+import Demo from "../pages/case";
+
+export default class extends Component {
   render() {
     return (
       <React.Suspense>
         <Switch>
-          <Route path="/about">
-            <About />
+          <Route exact path="/">
+            <Redirect to="/react" />
           </Route>
-          <Route path="/users">
-            <Users />
+          <Route path="/case">
+            <Switch>
+              <Route strict from="/case" path="/case" component={Demo} />
+            </Switch>
           </Route>
-          <Route path="/home">
-            <Home />
-          </Route>
-          <Route path="/list">
-            <Table />
-          </Route>
+          <Route path="/react">React</Route>
         </Switch>
       </React.Suspense>
     );

@@ -5,18 +5,25 @@ import Demo from "../pages/case";
 
 export default class extends Component {
   render() {
+    // TODO： fallback 组件
     return (
-      <React.Suspense>
+      <React.Suspense fallback="加载中...">
         <Switch>
           <Route exact path="/">
-            <Redirect to="/react" />
+            <Redirect to="/case" />
           </Route>
-          <Route path="/case">
-            <Switch>
-              <Route strict from="/case" path="/case" component={Demo} />
-            </Switch>
+          <Route
+            path="/case"
+            children={(params) => {
+              const { match, ...rest } = params;
+              console.log(params);
+              if (match.isExact) return <Demo {...rest} />;
+              return <Redirect to={match.url} />;
+            }}
+          />
+          <Route exact path="/react">
+            React
           </Route>
-          <Route path="/react">React</Route>
         </Switch>
       </React.Suspense>
     );

@@ -3,15 +3,15 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import NavBar from "./router/nav";
 import Pages from "./router";
-import "./index.less";
+import "./styles/index.less";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <header id="head">
+      <header className="head">
         <NavBar />
       </header>
-      <main id="content">
+      <main className="content">
         <Pages />
       </main>
     </Router>

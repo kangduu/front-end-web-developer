@@ -1,0 +1,26 @@
+@import './reset.css';
+@import "./vender.less";
+
+#root {
+    padding: 0;
+    margin: 0 auto;
+    width: 100%;
+    min-height: 100%;
+}
+
+@media screen and (max-width:720px) {
+    #root {
+        width: 100%;
+    }
+}
+
+.head {
+    width: @container-width;
+    padding-top: 10px;
+    margin: 0 auto 20px;
+}
+
+.content {
+    width: @container-width;
+    margin: 0 auto;
+}

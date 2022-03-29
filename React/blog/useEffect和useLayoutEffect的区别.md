@@ -6,7 +6,7 @@
 useEffect(didUpdate[,[dep]])
 ```
 
-1.  赋值给 `useEffect` 的函数 didUpdate 会在<u>组件渲染到屏幕之后</u>执行。 
+1.  赋值给 `useEffect` 的函数 didUpdate 会在<u>组件渲染到屏幕之后</u>执行。 即待浏览器完成画面渲染之后才会延迟调用 `useEffect` 。
 
 2. 清除函数（didUpdate的返回值）。 为防止内存泄漏，清除函数会<u>在组件卸载前执行</u>。  如果组件多次渲染（通常如此），则**在执行下一个 effect 之前，上一个 effect 就已被清除**。 
 

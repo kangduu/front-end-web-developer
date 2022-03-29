@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-
 import Demo from "../pages/case";
+import ReactPage from "../pages/react";
 
 export default class extends Component {
   render() {
@@ -10,7 +10,7 @@ export default class extends Component {
       <React.Suspense fallback="加载中...">
         <Switch>
           <Route exact path="/">
-            <Redirect to="/case" />
+            <Redirect to="/react" />
           </Route>
           <Route
             path="/case"
@@ -22,7 +22,7 @@ export default class extends Component {
             }}
           />
           <Route exact path="/react">
-            React
+            <ReactPage />
           </Route>
         </Switch>
       </React.Suspense>

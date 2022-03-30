@@ -1,15 +1,14 @@
 import React, { Component } from "react";
 import G6 from "@antv/g6";
 import MockData from "./data";
-
-const ref = React.createRef();
+import "./styles.less";
 
 const color = "#198efa";
 
 G6.registerNode(
   "card-node",
   {
-    // ! 这个options，可以在那些生命周期获取，可用来zuoshenm？
+    // ! 这个options，可以在那些生命周期获取，可用来做什么？
     // options: {
     //   style: {
     //     fill: "red",
@@ -104,11 +103,11 @@ G6.registerNode(
     setState(name, value, item) {
       const group = item.getContainer();
       const shape = group.get("children")[0]; // 顺序根据 draw 时确定
-      if (name === "running") {
+      if (name === "hover" || name === "selected") {
         if (value) {
           shape.attr("stroke", color);
         } else {
-          shape.attr("stroke", "transparent");
+          if (!item.hasState("selected")) shape.attr("stroke", "transparent");
         }
       }
       if (name === "collapsed") {
@@ -118,29 +117,6 @@ G6.registerNode(
         const icon = value ? G6.Marker.expand : G6.Marker.collapse;
         marker.attr("symbol", icon);
       }
-    },
-    /**
-     * 获取锚点（相关边的连入点）
-     * @param  {Object} cfg 节点的配置项
-     * @return {Array|null} 锚点（相关边的连入点）的数组,如果为 null，则没有锚点
-     */
-    getAnchorPoints(cfg) {
-      // console.log("getAnchorPoints", cfg);
-      // 设置锚点（很多锚点怎么实现？） ： https://g6.antv.vision/zh/docs/manual/middle/elements/nodes/anchorpoint
-
-      // const points = new Array(8)
-      //   .fill(0)
-      //   .map((item, index) => [item, ((index + 1) / 15).toFixed(0)]);
-      // return [...points, [1, 0.5]];
-
-      return [
-        [0, 0.1],
-        [0, 0.3],
-        [0, 0.5],
-        [0, 0.7],
-        [0, 0.9],
-        [1, 0.5],
-      ];
     },
   }
   // 继承内置节点类型的名字，例如基类 'single-node'，或 'circle', 'rect' 等
@@ -209,39 +185,43 @@ function getEdgeColor(cfg) {
 function customEdge(cfg) {
   const { startPoint, endPoint, sourceNode } = cfg;
 
-  const direction = getDirection(cfg),
-    sDistance = 60 * direction,
-    eDistance = 50 * direction;
+  const direction = getDirection(cfg);
+
+  let sDistance = 60,
+    eDistance = 50;
 
   const { x: sx, y: sy } = startPoint,
     { x: ex, y: ey } = endPoint;
 
-  const path = ((parents, dir, sd, ed) => {
-    // 起始节点若无父节点，不显示marker，则 M 起点不一样
-    let sIndent, eIndet;
+  console.log(ex - sx);
 
-    if (dir > 0) {
-      sIndent = (Array.isArray(parents) && parents.length > 0 ? 35 : 15) * dir;
-      eIndet = 20 * dir;
-    } else {
-      sIndent = (Array.isArray(parents) && parents.length > 0 ? 15 : 35) * dir;
-      eIndet = 70 * dir;
-    }
+  const parents = sourceNode.getModel().parents;
+  // 起始节点若无父节点，不显示marker，则 M 起点不一样
+  let sIndent = Array.isArray(parents) && parents.length > 0 ? 35 : 15,
+    eIndet;
 
-    let path = [
+  if (direction > 0) {
+    eIndet = 20 * direction;
+  } else {
+    sIndent = sIndent - 2;
+    sDistance = sDistance - 10;
+    eDistance = eDistance + 10;
+    eIndet = 70 * direction;
+  }
+
+  let path = [
+    ["M", sx + sIndent, sy],
+    ["L", sx + sDistance, sy],
+    ["L", sx + sDistance, ey],
+    ["L", ex - eIndet, ey],
+  ];
+
+  if (sx === ex) {
+    path = [
       ["M", sx + sIndent, sy],
-      ["L", sx + sd, sy],
-      ["L", sx + sd, ey],
-      ["L", ex - eIndet, ey],
+      ["L", ex - eDistance, ey],
     ];
-    if (sx === ex)
-      path = [
-        ["M", sx + sIndent, sy],
-        ["L", ex - ed, ey],
-      ];
-
-    return path;
-  })(sourceNode.getModel().parents, direction, sDistance, eDistance);
+  }
 
   return path;
 }
@@ -257,17 +237,49 @@ G6.registerEdge(
             path: G6.Arrow.triangle(10, 10, 0),
             fill: color,
             radius: true,
+            lineDash: [],
             d: 0,
           },
           path: customEdge(cfg),
           stroke: color,
           lineWidth: 2,
-          lineAppendWidth: 2,
+          lineAppendWidth: 10,
         },
         name: "path-shape",
       });
 
       return keyShape;
+    },
+    setState(name, value, item) {
+      const shape = item.get("keyShape");
+      // 流入动画
+      if (name === "running") {
+        if (value) {
+          let index = 0;
+          shape.animate(
+            () => {
+              index++;
+              if (index > 9) {
+                index = 0;
+              }
+              const res = {
+                lineDash: [8, 4, 2, 4],
+                lineDashOffset: -index,
+              };
+              // return the params for this frame
+              return { ...res, lineWidth: 4 };
+            },
+            {
+              repeat: true,
+              duration: 1000,
+            }
+          );
+        } else {
+          shape.stopAnimate();
+          shape.attr("lineDash", null);
+          shape.attr("lineWidth", 2);
+        }
+      }
     },
   }
   // "polyline"
@@ -364,6 +376,7 @@ class IndentManager {
 
 export default class DemoTree extends Component {
   indentManager = new IndentManager();
+  ref = React.createRef();
   // 【折叠】点击 marker 触发
   indentGraph = (e) => {
     try {
@@ -388,6 +401,94 @@ export default class DemoTree extends Component {
     }
   };
 
+  clearNodeState(state, ignoreNodes = []) {
+    const hasStateNodes = this.graph.findAllByState("node", state);
+    const ids = ignoreNodes.map((item) => item.getModel().id);
+
+    hasStateNodes.forEach((node) => {
+      const { id } = node.getModel();
+      if (ids.indexOf(id) === -1) node.setState(state, false);
+    });
+  }
+
+  clearEdgeState(state, ignoreEdges = []) {
+    const hasStateEdges = this.graph.findAllByState("edge", state);
+    const ids = ignoreEdges.map((item) => item.getModel().id);
+
+    hasStateEdges.forEach((edge) => {
+      const { id } = edge.getModel();
+      if (ids.indexOf(id) === -1) edge.setState(state, false);
+    });
+  }
+
+  // 设置节点相关边的动画
+  setNodeEdgesRunning = (node) => {
+    const edges = node.getEdges();
+    edges.forEach((edge) => {
+      if (!edge.hasState("running")) edge.setState("running", true);
+    });
+    this.clearEdgeState("running", edges);
+  };
+
+  bindEventForGraph(graph) {
+    graph.on("afterrender", () => {
+      graph.getEdges().forEach((edge) => {
+        if (edge) {
+          const direction = getDirection(edge.getModel());
+          edge.update({ direction, sourceAnchor: 4 });
+        }
+      });
+      // graph.getNodes().forEach((node) => {
+      //   console.log(node.getInEdges());
+      // });
+    });
+
+    graph.on("node:click", (e) => {
+      const node = e.item;
+      if (e.target.get("name") === "collapse-icon") {
+        node.getModel().collapsed = !node.getModel().collapsed;
+        graph.setItemState(node, "collapsed", node.getModel().collapsed);
+        // 折叠
+        this.indentGraph(e);
+      } else if (!node.hasState("selected")) {
+        node.setState("selected", true);
+        this.clearNodeState("selected", [node]);
+
+        this.setNodeEdgesRunning(node);
+      }
+    });
+
+    // 鼠标移动到上面 running，移出结束
+    graph.on("node:mouseenter", (e) => {
+      const node = e.item;
+      if (e.target.get("name") === "rect-shape") {
+        graph.setItemState(node, "hover", true);
+      }
+    });
+
+    graph.on("node:mouseleave", (e) => {
+      const node = e.item;
+      graph.setItemState(node, "hover", false);
+    });
+
+    graph.on("edge:mouseenter", (e) => {
+      const edge = e.item;
+      !edge.hasState("running") && edge.setState("running", true);
+    });
+
+    graph.on("edge:mouseleave", (e) => {
+      const edge = e.item;
+      const sourceNode = edge.getSource();
+      const targetNode = edge.getTarget();
+      if (
+        !sourceNode.hasState("selected") &&
+        !targetNode.hasState("selected")
+      ) {
+        edge.setState("running", false);
+      }
+    });
+  }
+
   renderGraph(container) {
     if (!container) return;
     const width = container.scrollWidth;
@@ -406,82 +507,48 @@ export default class DemoTree extends Component {
       defaultNode: {
         size: [212, 95],
         type: "card-node",
-        // anchorPoints: [
-        //   [1, 0.5],
-        //   [0, 0.5],
-        // ],
+        anchorPoints: [
+          [0, 0.3],
+          [0, 0.5],
+          [0, 0.7],
+          [1, 0.3],
+          [1, 0.5],
+          [1, 0.7],
+        ],
       },
       defaultEdge: {
         type: "card-edge",
-        // size: 1,
-        // color: "#e78686",
-        // style: {
-        //   endArrow: {
-        //     path: "M 0,0 L 8,4 L 8,-4 Z",
-        //     fill: "#e78686",
-        //   },
-        //   radius: 20,
-        // },
       },
       layout: {
         type: "dagre",
         rankdir: "LR",
         align: "UL",
         controlPoints: true,
-        nodesepFunc: () => 10,
+        nodesepFunc: () => 30,
         ranksepFunc: () => 140,
       },
+      plugins: [new G6.Minimap()],
     });
 
     graph.read(MockData);
+
     this.graph = graph;
 
-    graph.on("afterrender", () => {
-      graph.getEdges().forEach((edge) => {
-        if (edge) {
-          const direction = getDirection(edge.getModel());
-          edge.update({ direction });
-        }
-      });
-    });
-
-    graph.on("node:click", (e) => {
-      const node = e.item;
-
-      if (e.target.get("name") === "collapse-icon") {
-        node.getModel().collapsed = !node.getModel().collapsed;
-        graph.setItemState(node, "collapsed", node.getModel().collapsed);
-        // graph.layout();
-
-        // 折叠
-        this.indentGraph(e);
-      }
-    });
-
-    // 鼠标移动到上面 running，移出结束
-    graph.on("node:mouseenter", (e) => {
-      const node = e.item;
-      if (e.target.get("name") === "rect-shape") {
-        graph.setItemState(node, "running", true);
-      }
-    });
-
-    graph.on("node:mouseleave", (e) => {
-      const node = e.item;
-      graph.setItemState(node, "running", false);
-    });
+    this.bindEventForGraph(graph);
   }
   componentDidMount() {
-    this.renderGraph(ref.current);
+    this.renderGraph(this.ref.current);
   }
   render() {
     return (
       <div
-        ref={ref}
+        ref={this.ref}
         style={{
           width: "100%",
-          height: "100vh",
+          height: "800px",
           margin: "0 auto",
+          border: "1px solid",
+          position: "relative",
         }}
       />
     );

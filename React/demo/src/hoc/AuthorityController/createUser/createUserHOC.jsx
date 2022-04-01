@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { auth } from "@mock/auth";
+import { auth } from "mock/auth";
 
 export default function (WrappedComponent) {
   return class extends Component {

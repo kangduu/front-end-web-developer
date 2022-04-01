@@ -7,7 +7,7 @@ import {
   NavLink,
 } from "react-router-dom";
 
-import { getRouteAuth } from "@mock/auth";
+import { getRouteAuth } from "mock/auth";
 const { user, routeAuth } = getRouteAuth();
 
 function Home() {

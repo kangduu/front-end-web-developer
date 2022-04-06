@@ -5,7 +5,9 @@ var ChapterFunction;
 (function (ChapterFunction) {
     /函数定义/;
     // 1. 声明式
-    function fn(name) { return name; }
+    function fn(name) {
+        return name;
+    }
     // 2. 表达式
     var fn1 = function () { };
     // 3. 箭头函数
@@ -15,14 +17,20 @@ var ChapterFunction;
     // TypeScript能够根据返回语句自动推断出返回值类型【类型推断？】
     function fn3(value) { }
     // 完整的函数类型
-    var f4 = function (x, y) { return x + y; };
+    var f4 = function (x, y) {
+        return x + y;
+    };
     // 只要参数类型是匹配的，那么就认为它是有效的函数类型，而不在乎参数名是否正确。
-    var f5 = function (m, n) { return m + n; };
+    var f5 = function (m, n) {
+        return m + n;
+    };
     // ! 重点：函数类型（参数类型和返回值类型）必须是初始化或赋值时对应类型的子类型。
-    var f6 = function (value) { }; //会报警告
+    //   const f6: (age: number) => number = function (value: number): void {}; //会报警告
     // ! 重点：只要你在任意一边声明了类型，都是正确的，因为TS编译器会自动识别出类型
     // ! 这叫做【“按上下文归类”】，是类型推论的一种。 它帮助我们更好地为程序指定类型。
-    var f7 = function (props) { return props; };
+    var f7 = function (props) {
+        return props;
+    };
     /必须参数、可选参数和默认参数/;
     // ? 传递给一个函数的参数（实参）个数，必须与函数期望的参数（形参）个数保持一致 ?
     f5(1, 2);
@@ -34,7 +42,7 @@ var ChapterFunction;
     };
     // ! 重点：默认参数的类型，由默认初始化表达式的类型决定。
     var f10 = function (phone) {
-        if (phone === void 0) { phone = 10 + '009'; }
+        if (phone === void 0) { phone = 10 + "009"; }
         return typeof phone;
     }; // phone 为 string 类型
     // console.log(f10(10)); // 错误：类型“number”的参数不能赋给类型“string”的参数。
@@ -70,7 +78,7 @@ var ChapterFunction;
                 var k = this.key;
                 return this.tags[k];
             };
-        }
+        },
     };
     // const showName = temp.showName()
     // console.log(showName());// 报错
@@ -87,27 +95,27 @@ var ChapterFunction;
                 var k = _this.key;
                 return { name: _this.tags[k] };
             };
-        }
+        },
     };
     var temp2 = {
         key: "temp",
         tags: {
             temp: "111",
-            value: 100
+            value: 100,
         },
         showName: function () {
             return function () {
                 var k = this.key;
                 return { name: this.tags[k] };
             };
-        }
+        },
     };
     /重载/;
     function func(params) {
-        if (typeof params === 'number') {
+        if (typeof params === "number") {
             return params;
         }
-        else if (typeof params === 'object') {
+        else if (typeof params === "object") {
             return params.x + params.y;
         }
     }

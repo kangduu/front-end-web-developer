@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc --watch --noEmit"
+    "start": "tsc --watch --noEmit",
+    "build": "tsc"
   },
   "author": "du kang",
   "license": "ISC"

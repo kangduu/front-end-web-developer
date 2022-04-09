@@ -1,8 +1,6 @@
 import ReactDOM from "react-dom";
 import { useEffect, useState } from "react";
 
-console.log(ReactDOM);
-
 const Increment = () => {
   const [count, setCount] = useState(0);
 
@@ -12,14 +10,11 @@ const Increment = () => {
 
   const incermentHandler = () => {
     setTimeout(() => {
-      let fls = ReactDOM.flushSync((a) => {
-        console.log(a);
+      ReactDOM.flushSync(() => {
         setCount((c) => c + 1);
         setCount((c) => c + 1);
         setCount((c) => c + 1);
-        return 1;
-      }, 123);
-      console.log("flushSync return", fls);
+      });
     }, 300);
   };
 

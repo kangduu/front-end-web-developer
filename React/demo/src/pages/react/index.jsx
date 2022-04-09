@@ -1,4 +1,5 @@
 import React from "react";
+import AutomaticBatching from "../../components/AutomaticBatching";
 
 const HookUseLayoutEffect = React.lazy(() =>
   import("src/hooks/useLayoutEffect")
@@ -10,8 +11,11 @@ export default function ReactPage() {
     <>
       <HookUseLayoutEffect />
 
-      <p>【性能优化】使用memo或PureComponent前的思考</p>
+      <h3>【性能优化】使用memo或PureComponent前的思考</h3>
       <MemoDemo />
+
+      <h3>Automatic Batching</h3>
+      <AutomaticBatching />
     </>
   );
 }

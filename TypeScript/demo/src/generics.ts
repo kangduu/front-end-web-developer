@@ -38,4 +38,31 @@ let jakeName: <T>(arr: T) => T = userName;
 let marryName: <U>(arr: U) => U = userName;
 let tonyName: { <T>(arr: T): T } = userName; // 泛型接口的写法
 
+// 4. 泛型约束
+interface Lengthwise {
+  length: number;
+}
+
+function logginIdentity<T extends Lengthwise>(arg: T): T {
+  console.log(arg.length);
+
+  return arg;
+}
+logginIdentity({ length: 19 });
+
+// 5. 在泛型约束中使用类型参数
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key];
+}
+
+let obj = {
+  a: 1,
+  b: 2,
+  c: 3,
+  d: 4,
+};
+
+getProperty(obj, "a");
+getProperty(obj, "m");
+
 export {};

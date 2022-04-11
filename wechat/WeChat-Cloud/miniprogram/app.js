@@ -14,8 +14,6 @@ App({
       });
     }
 
-    this.globalData = { name: "云开发" };
-
-    console.log('onLaunch', wx.version);
+    this.globalData = { name: "云开发" }; 
   }
 });

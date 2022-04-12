@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import Article from "../article";
-import SideBar from "../sidebar/index";
+import Article from "./article";
+import SideBar from "./sidebar/index";
 import styles from "./layout.module.scss";
 
 const App: FC<any> = () => {

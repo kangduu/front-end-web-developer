@@ -1,8 +1,8 @@
 import { useReducer, FC } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { RouterType } from "../../routers/route";
-import Logo from "../../assets/typescript.svg";
-import { sidebarRoutes } from "../../routers/index";
+import { RouterType } from "../../../routers/route";
+import Logo from "../../../assets/typescript.svg";
+import { sidebarRoutes } from "../../../routers/index";
 import styles from "./styles.module.scss";
 
 const RootNames: string[] = Object.keys(sidebarRoutes);

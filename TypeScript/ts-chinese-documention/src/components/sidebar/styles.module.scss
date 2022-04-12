@@ -55,16 +55,11 @@
     line-height: 2.5rem;
     padding-left: 1rem;
     border-bottom: 1px solid var(--sidebar-item-border-color);
+    color: var(--alt-text-color);
+    transition: all 0.3s;
 
-    &>a {
-        color: var(--alt-text-color);
-        text-decoration: none;
-        transition: all 0.3s;
-
-    }
-
-    &:hover>a,
-    .route-item-active {
+    &:hover,
+    &.route-item-active {
         color: var(--primary-color);
     }
 }

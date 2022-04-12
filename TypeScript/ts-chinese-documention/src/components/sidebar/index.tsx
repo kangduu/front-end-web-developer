@@ -1,5 +1,5 @@
 import { useReducer, FC } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { RouterType } from "../../routers/route";
 import Logo from "../../assets/typescript.svg";
 import { sidebarRoutes } from "../../routers/index";
@@ -51,6 +51,7 @@ function reducer(state: IState, action: IAction): IState | never {
 
 const NavBar: FC<any> = () => {
   const location = useLocation();
+  const history = useHistory();
   const [state, dispatch] = useReducer(reducer, init(location.pathname));
 
   if (RootNames.length === 0) return null;
@@ -112,23 +113,23 @@ const NavBar: FC<any> = () => {
                   return (
                     <li
                       key={path}
-                      className={styles["route-item"]}
+                      className={
+                        styles["route-item"] +
+                        " " +
+                        (state.activePath === path
+                          ? styles["route-item-active"]
+                          : "")
+                      }
                       onClick={() => {
                         dispatch({ type: "setActivePath", payload: path });
                         dispatch({ type: "setOneActive", payload: rootName });
+
+                        if (state.activePath !== path) {
+                          history.push(path);
+                        }
                       }}
                     >
-                      <Link
-                        to={path}
-                        className={
-                          state.activePath === path
-                            ? styles["route-item-active"]
-                            : ""
-                        }
-                        // TODO children
-                      >
-                        {name}
-                      </Link>
+                      {name}
                     </li>
                   );
                 })}

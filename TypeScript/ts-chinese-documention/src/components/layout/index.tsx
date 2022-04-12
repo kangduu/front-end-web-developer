@@ -7,7 +7,7 @@ import styles from "./layout.module.scss";
 const App: FC<any> = () => {
   return (
     <main className={styles["container"]}>
-      <Router>
+      <Router forceRefresh>
         <nav className={styles["sidebar"]}>
           <SideBar />
         </nav>

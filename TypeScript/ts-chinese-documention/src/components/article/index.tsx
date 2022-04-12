@@ -1,18 +1,19 @@
 import { FC } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { routes } from "../../routers";
 import { RouterType } from "../../routers/route";
 
-const Article: FC<any> = (props: any) => {
-  console.log(routes);
+const Article: FC<any> = () => {
   return (
-    <section>
-      <Routes>
-        {routes.map((item: RouterType) => (
-          <Route path={item.path} element={item.component}></Route>
-        ))}
-      </Routes>
-    </section>
+    <>
+      {routes.map((item: RouterType) => {
+        return (
+          <Route key={item.path} path={item.path}>
+            <item.component />
+          </Route>
+        );
+      })}
+    </>
   );
 };
 export default Article;

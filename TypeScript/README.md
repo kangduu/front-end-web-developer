@@ -6,3 +6,4 @@
 
 - [TypeScript 在 React 中使用总结](https://blog.csdn.net/s2096828/article/details/83744677)
 - [TypeScript 中如何使用 webpack 的 require.context](http://www.javashuo.com/article/p-hxyrulyc-ny.html)
+- [react 导入 react-router-dom 引入 Switch 报 ‘Switch‘ is not exported from ‘react-router-dom‘](https://blog.csdn.net/qq_43392573/article/details/121658373)

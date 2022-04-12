@@ -1,4 +1,4 @@
-import { RouterType } from "./route";
+import { RouterContextType, RouterType } from "./route";
 
 // 首字母大写
 function capitalizeTheFirstLetter(value: string): string {
@@ -9,20 +9,25 @@ function capitalizeTheFirstLetter(value: string): string {
 function setRootName(name: string): string {
   const splitName: string[] = name.split("-");
 
+  if (splitName.length === 1) {
+    return capitalizeTheFirstLetter(splitName[0]);
+  }
+
   const RootName = splitName.reduce((a: string, b: string) => {
     if (a && b) {
       return capitalizeTheFirstLetter(a) + " " + capitalizeTheFirstLetter(b);
     }
 
-    if (a) capitalizeTheFirstLetter(a);
+    if (a) return capitalizeTheFirstLetter(a);
 
     return "";
   });
 
   return RootName;
 }
-const routes: RouterType[] = [];
 
+const routes: RouterType[] = [];
+const sidebarRoutes: RouterContextType = {};
 const RouteContext = require.context("./", true, /(\.route.ts|\.route.js)$/);
 RouteContext.keys().forEach((key: string) => {
   // set path
@@ -32,16 +37,10 @@ RouteContext.keys().forEach((key: string) => {
 
   // get component name
   let componentConfig = RouteContext(key);
+  let ComponentName = setRootName(KeyMatches);
 
-  console.log(setRootName(KeyMatches), ":", componentConfig);
-  let ComponentName = componentConfig.default?.name;
-  if (ComponentName === undefined) {
-    // ! 必须使用 export default 方式导出。
-    throw new SyntaxError(
-      'Page components must be exported using "export default ComponentName" mode.'
-    );
-  }
-  // TODO 自动合并路由，利于维护
+  sidebarRoutes[ComponentName] = componentConfig.default;
+  routes.push(...componentConfig.default);
 });
 
-export default routes;
+export { sidebarRoutes, routes };

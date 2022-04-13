@@ -1,9 +1,9 @@
 import { useReducer, FC } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { RouterType } from "../../../routers/route";
-import Logo from "../../../assets/typescript.svg";
 import { sidebarRoutes } from "../../../routers/index";
 import styles from "./styles.module.scss";
+import Logo from "../../logo";
 
 const RootNames: string[] = Object.keys(sidebarRoutes);
 
@@ -57,10 +57,7 @@ const NavBar: FC<any> = () => {
   if (RootNames.length === 0) return null;
   return (
     <>
-      <div className={styles["nav-logo"]}>
-        <img src={Logo} alt="" />
-        <span>TypeScript</span>
-      </div>
+      {/* <Logo /> */}
       <ul>
         {RootNames.map((rootName: string) => {
           const route = sidebarRoutes[rootName];

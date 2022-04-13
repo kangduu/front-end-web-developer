@@ -9,7 +9,7 @@ const Article: FC<any> = () => {
     <div className={styles["article-container"]}>
       {routes.map((item: RouterType) => {
         return (
-          <Route key={item.path} path={item.path}>
+          <Route exact key={item.path} path={item.path}>
             <item.component />
           </Route>
         );

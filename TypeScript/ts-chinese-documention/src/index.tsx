@@ -1,18 +1,33 @@
-import React from "react";
 import reportWebVitals from "./reportWebVitals";
-import App from "./components/layout";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
-import "./styles/reset.css";
+import App from "./components/layout";
+import Home from "./pages/home";
+
 import "./styles/index.css";
 
 const { createRoot } = require("react-dom/client");
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <React.Suspense fallback={null}>
-      <App />
-    </React.Suspense>
-  </React.StrictMode>
+  <Router>
+    <Switch>
+      <Redirect exact from="/" to="/home" />
+      <Route exact path="/home">
+        <Home />
+      </Route>
+      <Route exact path="/">
+        <App />
+      </Route>
+      <Route path="/404">
+        <div>404</div>
+      </Route>
+    </Switch>
+  </Router>
 );
 
 // If you want to start measuring performance in your app, pass a function

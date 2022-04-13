@@ -1,10 +1,25 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
+import Categories from "../../components/categories";
+import styles from "./style.module.scss";
 
-class Home extends React.Component<any, any> {
-  render() {
-    return <main></main>;
-  }
-}
+const Home: FC<any> = () => {
+  return (
+    <main className={styles.app}>
+      <nav className={styles.sidebar}></nav>
+      <section className={styles.content}>
+        <header className={styles.head}>
+          <div className={styles.categories}>
+            <Categories />
+          </div>
+          <p className={styles["descript-text"]}>
+            Front-end Development [中文文档]
+          </p>
+        </header>
+        <div className={styles.article}></div>
+      </section>
+    </main>
+  );
+};
+
 export default withRouter(Home);

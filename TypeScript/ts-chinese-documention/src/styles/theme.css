@@ -4,8 +4,12 @@
 }
 
 :root[theme="dark"] {
-    --primary-color: #000;
-    --background-color: var(--primary-color);
+    --primary-color: #161D26;
+    --background-color: #1F2935;
+    --pure-background: var(--primary-color);
+    --text-color: #fff;
+    --text-sub-color: #8291A9;
+    --border-color: #415265;
 }
 
 :root[theme="sepia"] {

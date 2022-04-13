@@ -1,15 +1,16 @@
 import reportWebVitals from "./reportWebVitals";
+import setTheme from "./utils/setTheme";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-
 import App from "./components/layout";
 import Home from "./pages/home";
-
 import "./styles/index.css";
+
+setTheme("dark");
 
 const { createRoot } = require("react-dom/client");
 const root = createRoot(document.getElementById("root"));

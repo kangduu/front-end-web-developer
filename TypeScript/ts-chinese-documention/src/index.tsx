@@ -1,28 +1,25 @@
-import reportWebVitals from "./reportWebVitals";
-import setTheme from "./utils/setTheme";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-import App from "./components/layout";
+import reportWebVitals from "./reportWebVitals";
+import setTheme from "./utils/setTheme";
 import Home from "./pages/home";
 import "./styles/index.css";
 
 setTheme("dark");
-
 const { createRoot } = require("react-dom/client");
 const root = createRoot(document.getElementById("root"));
 root.render(
   <Router>
     <Switch>
-      <Redirect exact from="/" to="/home" />
-      <Route exact path="/home">
-        <Home />
-      </Route>
-      <Route exact path="/">
-        <App />
+      <Redirect exact from="/" to="app" />
+      <Route path="/app">
+        <Router basename="/app">
+          <Home />
+        </Router>
       </Route>
       <Route path="/404">
         <div>404</div>

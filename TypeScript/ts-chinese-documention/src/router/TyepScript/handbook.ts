@@ -1,10 +1,11 @@
 import React from "react";
-import { RouterType } from "../route";
+import { RouteType } from "../../types/route";
 
-const Routes: RouterType[] = [
+const BasePath = "/ts/handbook";
+const Routes: RouteType[] = [
   {
     name: "The TypeScript Handbook",
-    path: "/handbook",
+    path: BasePath,
     component: React.lazy(
       () => import("../../pages/handbook/TheTypeScriptHandbook")
     ),

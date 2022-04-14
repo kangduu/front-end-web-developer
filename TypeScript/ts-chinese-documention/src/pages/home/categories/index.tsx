@@ -1,33 +1,18 @@
 import React, { FC, RefObject } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { HeaderRoutes } from "src/router";
 import "./style.scss";
 
-const list = [
-  {
-    label: "React Transition Group",
-    key: "nav-react",
-    path: "/react",
-  },
-  {
-    label: "React Router",
-    key: "nav-react-router",
-    path: "/react",
-  },
-  {
-    label: "TypeScript",
-    key: "nav-ts",
-    path: "/ts",
-  },
-];
-
-const Categories: FC<any> = (props: any) => {
+const Categories: FC<any> = (props) => {
+  let history = useHistory();
+  console.log(history, useLocation());
   const [order, setOrder] = React.useState(0);
 
   const handleClick = React.useCallback((e) => {
     const node = e.target;
     if (node.tagName.toLowerCase() === "li") {
-      const { index, path } = node.dataset;
+      const { index } = node.dataset;
       setOrder(Number(index));
-      //   history.push(path);
     }
   }, []);
 
@@ -49,14 +34,13 @@ const Categories: FC<any> = (props: any) => {
 
   return (
     <ul ref={ulRef} id="nav" onClick={handleClick}>
-      {list.map(({ label, key, path }, index) => (
+      {HeaderRoutes.map(({ name }, index) => (
         <li
-          key={key}
-          data-index={index}
-          data-path={path}
+          key={name}
+          data-index={index} // 标记当前点击的是哪个
           className={order === index ? "active" : ""}
         >
-          {label}
+          {name}
         </li>
       ))}
       <div className="line" ref={lineRef} />

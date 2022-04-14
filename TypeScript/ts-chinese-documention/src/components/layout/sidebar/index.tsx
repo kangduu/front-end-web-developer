@@ -1,11 +1,10 @@
 import { useReducer, FC } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { RouterType } from "../../../routers/route";
-import { sidebarRoutes } from "../../../routers/index";
+import { RouteType } from "src/types/route";
+import { HeaderRoutes } from "src/router/index";
 import styles from "./styles.module.scss";
-import Logo from "../../logo";
-
-const RootNames: string[] = Object.keys(sidebarRoutes);
+// import Logo from "../../logo";
+const RootNames: string[] = Object.keys(HeaderRoutes[0].children);
 
 // useReducer
 interface IState {
@@ -16,51 +15,51 @@ interface IAction {
   type: string;
   payload: string;
 }
-function init(pathname: string): IState {
-  let active = [],
-    activePath = "";
-  for (let i = 0; i < RootNames.length; i++) {
-    const route = sidebarRoutes[RootNames[i]];
-    if (route.find((item) => pathname === item.path)) {
-      activePath = pathname;
-      active.push(RootNames[i]);
-      break;
-    }
-  }
-  return { active, activePath };
-}
-function reducer(state: IState, action: IAction): IState | never {
-  switch (action.type) {
-    case "setOneActive":
-      return { ...state, active: [action.payload] };
-    case "setActive":
-      if (state.active.includes(action.payload)) {
-        return {
-          ...state,
-          active: state.active.filter((item) => item !== action.payload),
-        };
-      } else {
-        return { ...state, active: [...state.active, action.payload] };
-      }
-    case "setActivePath":
-      return { ...state, activePath: action.payload };
-    default:
-      throw new Error();
-  }
-}
+// function init(pathname: string): IState {
+//   let active = [],
+//     activePath = "";
+//   for (let i = 0; i < RootNames.length; i++) {
+//     const route = HeaderRoutes[RootNames[i]];
+//     if (route.find((item) => pathname === item.path)) {
+//       activePath = pathname;
+//       active.push(RootNames[i]);
+//       break;
+//     }
+//   }
+//   return { active, activePath };
+// }
+// function reducer(state: IState, action: IAction): IState | never {
+//   switch (action.type) {
+//     case "setOneActive":
+//       return { ...state, active: [action.payload] };
+//     case "setActive":
+//       if (state.active.includes(action.payload)) {
+//         return {
+//           ...state,
+//           active: state.active.filter((item) => item !== action.payload),
+//         };
+//       } else {
+//         return { ...state, active: [...state.active, action.payload] };
+//       }
+//     case "setActivePath":
+//       return { ...state, activePath: action.payload };
+//     default:
+//       throw new Error();
+//   }
+// }
 
 const NavBar: FC<any> = () => {
   const location = useLocation();
-  const history = useHistory();
-  const [state, dispatch] = useReducer(reducer, init(location.pathname));
+  // const history = useHistory();
+  // const [state, dispatch] = useReducer(reducer, init(location.pathname));
 
   if (RootNames.length === 0) return null;
   return (
     <>
       {/* <Logo /> */}
-      <ul>
+      {/* <ul>
         {RootNames.map((rootName: string) => {
-          const route = sidebarRoutes[rootName];
+          const route = HeaderRoutes[rootName];
           const isActive = state.active.indexOf(rootName) > -1;
           return (
             <li
@@ -105,7 +104,7 @@ const NavBar: FC<any> = () => {
                   (isActive ? styles["collapsed-show"] : "")
                 }
               >
-                {route.map((item: RouterType) => {
+                {route.map((item: RouteType) => {
                   const { path, name } = item;
                   return (
                     <li
@@ -134,7 +133,7 @@ const NavBar: FC<any> = () => {
             </li>
           );
         })}
-      </ul>
+      </ul> */}
     </>
   );
 };

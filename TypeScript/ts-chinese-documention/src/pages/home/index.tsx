@@ -1,12 +1,15 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { withRouter } from "react-router";
-import Categories from "../../components/categories";
+import { Link } from "react-router-dom";
+import Categories from "src/pages/home/categories";
 import styles from "./style.module.scss";
 
-const Home: FC<any> = () => {
+const Home: FC<any> = (props) => {
   return (
     <main className={styles.app}>
-      <nav className={styles.sidebar}></nav>
+      <nav className={styles.sidebar}>
+        <Link to="/ts">TS</Link>
+      </nav>
       <section className={styles.content}>
         <header className={styles.head}>
           <div className={styles.categories}>

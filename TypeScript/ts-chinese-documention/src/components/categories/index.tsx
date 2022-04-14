@@ -8,6 +8,11 @@ const list = [
     path: "/react",
   },
   {
+    label: "React Router",
+    key: "nav-react-router",
+    path: "/react",
+  },
+  {
     label: "TypeScript",
     key: "nav-ts",
     path: "/ts",

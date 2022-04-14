@@ -12,9 +12,7 @@ const Home: FC<any> = () => {
           <div className={styles.categories}>
             <Categories />
           </div>
-          <p className={styles["descript-text"]}>
-            Front-end Development [中文文档]
-          </p>
+          <p className={styles["descript-text"]}>Front-end Development</p>
         </header>
         <div className={styles.article}></div>
       </section>

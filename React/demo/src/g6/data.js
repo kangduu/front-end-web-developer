@@ -79,27 +79,31 @@ const data = {
       target: "3",
     },
     {
+      source: "6",
+      target: "2",
+    },
+    {
       source: "1",
       target: "5",
+    },
+    {
+      source: "4",
+      target: "5",
+    },
+    {
+      source: "6",
+      target: "1",
     },
     {
       source: "4",
       target: "2",
     },
     {
-      source: "6",
-      target: "2",
-    },
-    {
-      source: "3",
-      target: "2",
-    },
-    {
       source: "1",
       target: "2",
     },
     {
-      source: "7",
+      source: "3",
       target: "2",
     },
   ],

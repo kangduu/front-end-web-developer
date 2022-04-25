@@ -118,6 +118,16 @@ G6.registerNode(
         marker.attr("symbol", icon);
       }
     },
+    getAnchorPoints() {
+      return [
+        [0, 0.3],
+        [0, 0.5],
+        [0, 0.7],
+        [1, 0.3],
+        [1, 0.5],
+        [1, 0.7],
+      ];
+    },
   }
   // 继承内置节点类型的名字，例如基类 'single-node'，或 'circle', 'rect' 等
   // 当不指定该参数则代表不继承任何内置节点类型
@@ -183,47 +193,49 @@ function getEdgeColor(cfg) {
 }
 
 function customEdge(cfg) {
-  const { startPoint, endPoint, sourceNode } = cfg;
-
+  const { startPoint, endPoint } = cfg;
   const direction = getDirection(cfg);
-
-  let sDistance = 60,
-    eDistance = 50;
-
   const { x: sx, y: sy } = startPoint,
     { x: ex, y: ey } = endPoint;
+  const s_d = 30,
+    e_d = 10;
 
-  console.log(ex - sx);
-
-  const parents = sourceNode.getModel().parents;
-  // 起始节点若无父节点，不显示marker，则 M 起点不一样
-  let sIndent = Array.isArray(parents) && parents.length > 0 ? 35 : 15,
-    eIndet;
-
+  // arrow right
   if (direction > 0) {
-    eIndet = 20 * direction;
-  } else {
-    sIndent = sIndent - 2;
-    sDistance = sDistance - 10;
-    eDistance = eDistance + 10;
-    eIndet = 70 * direction;
-  }
+    if (Math.abs(ey - sy) < 40) {
+      // a half of node height
+      return [
+        ["M", sx + s_d, sy],
+        ["L", ex - e_d, sy],
+      ];
+    }
 
-  let path = [
-    ["M", sx + sIndent, sy],
-    ["L", sx + sDistance, sy],
-    ["L", sx + sDistance, ey],
-    ["L", ex - eIndet, ey],
-  ];
-
-  if (sx === ex) {
-    path = [
-      ["M", sx + sIndent, sy],
-      ["L", ex - eDistance, ey],
+    if (ex - sx > 212 + 140) {
+      const s = ey - sy >= 0 ? -1 : +1;
+      return [
+        ["M", sx + s_d, sy],
+        ["L", sx + 2 * s_d, sy],
+        ["L", sx + 2 * s_d, ey + s * 40],
+        ["L", ex - e_d, ey + s * 40],
+      ];
+    }
+    return [
+      ["M", sx + s_d, sy],
+      ["L", sx + 2 * s_d, sy],
+      ["L", sx + 2 * s_d, ey],
+      ["L", ex - e_d, ey],
     ];
   }
-
-  return path;
+  // arrow left
+  else {
+    const s = ey - sy >= 0 ? 1 : -1;
+    return [
+      ["M", sx + s_d, sy],
+      ["L", sx + 2 * s_d, sy],
+      ["L", sx + 2 * s_d, ey + s * 48],
+      ["L", ex + 2 * s_d + 10, ey + s * 48],
+    ];
+  }
 }
 G6.registerEdge(
   "card-edge",
@@ -435,7 +447,7 @@ export default class DemoTree extends Component {
       graph.getEdges().forEach((edge) => {
         if (edge) {
           const direction = getDirection(edge.getModel());
-          edge.update({ direction, sourceAnchor: 4 });
+          edge.update({ direction });
         }
       });
       // graph.getNodes().forEach((node) => {
@@ -507,17 +519,10 @@ export default class DemoTree extends Component {
       defaultNode: {
         size: [212, 95],
         type: "card-node",
-        anchorPoints: [
-          [0, 0.3],
-          [0, 0.5],
-          [0, 0.7],
-          [1, 0.3],
-          [1, 0.5],
-          [1, 0.7],
-        ],
       },
       defaultEdge: {
         type: "card-edge",
+        sourceAnchor: 4,
       },
       layout: {
         type: "dagre",

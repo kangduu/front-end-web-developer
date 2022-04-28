@@ -20,6 +20,7 @@ import moment from "moment";
 import "moment/locale/ru";
 import "./styles/App.less";
 import Header from "./components/header";
+import Language from "./components/language";
 
 moment.locale("ru");
 moment.locale("en");
@@ -38,26 +39,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showModal = () => {
-    setVisible(true);
-  };
-  const hideModal = () => {
-    setVisible(false);
-  };
-
-  const info = () => {
-    Modal.info({
-      title: "some info",
-      content: "some info",
-    });
-  };
-  const confirm = () => {
-    Modal.confirm({
-      title: "some info",
-      content: "some info",
-    });
-  };
-
   const changeLocale = (e) => {
     const value = e.target.value;
     if (value && value.locale) {
@@ -68,7 +49,9 @@ function App() {
 
   return (
     <ConfigProvider locale={locale} className="App">
-      <Header />
+      <Header>
+        <Language />
+      </Header>
       <Radio.Group value={locale} onChange={changeLocale}>
         <Radio.Button key="en" value={enUS}>
           English

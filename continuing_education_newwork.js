@@ -1,4 +1,7 @@
 window.continuing_education = (function () {
+  if(window.continuing_education) {
+    window.continuing_education.removeTimer()
+  }
   class ContinuingEducation {
     constructor() {
       this.cache = {
@@ -15,7 +18,6 @@ window.continuing_education = (function () {
       if (!func instanceof Function) {
         throw Error("[util_interval] func must be a function!");
       }
-      console.log("[util_interval] start:", func.name);
       const _this = this;
       const _time = typeof time === "number" ? time : 1000;
       _this.timer[func.name] = setTimeout(() => {

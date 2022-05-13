@@ -19,7 +19,7 @@ window.continuing_education = (function () {
         throw Error("[util_interval] func must be a function!");
       }
       const _this = this;
-      const _time = typeof time === "number" ? time : 1000;
+      const _time = typeof time === "number" ? time : 5000;
       _this.timer[func.name] = setTimeout(() => {
         const submited = func.call(null, args);
         clearTimeout(_this.timer[func.name]);
@@ -104,7 +104,7 @@ window.continuing_education = (function () {
     running() {
       this.autoplayWhenPaused();
       this.overloadConfirmAndAlert();
-      this.util_interval(this.submitCode.bind(this, 3000));
+      this.util_interval(this.submitCode.bind(this, 5000));
       // this.util_interval(this.timeChanged.bind(this, 8000));
     }
 

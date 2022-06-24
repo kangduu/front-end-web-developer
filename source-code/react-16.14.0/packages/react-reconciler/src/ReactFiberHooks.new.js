@@ -1877,10 +1877,13 @@ const HooksDispatcherOnRerender: Dispatcher = {
   unstable_isNewReconciler: enableNewReconciler,
 };
 
+// HooksDispatcher
 let HooksDispatcherOnMountInDEV: Dispatcher | null = null;
 let HooksDispatcherOnMountWithHookTypesInDEV: Dispatcher | null = null;
 let HooksDispatcherOnUpdateInDEV: Dispatcher | null = null;
 let HooksDispatcherOnRerenderInDEV: Dispatcher | null = null;
+
+// InvalidNested
 let InvalidNestedHooksDispatcherOnMountInDEV: Dispatcher | null = null;
 let InvalidNestedHooksDispatcherOnUpdateInDEV: Dispatcher | null = null;
 let InvalidNestedHooksDispatcherOnRerenderInDEV: Dispatcher | null = null;

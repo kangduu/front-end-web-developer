@@ -172,11 +172,13 @@ function warnOnInvalidCallback(callback: mixed, callerName: string): void {
   }
 }
 
+// 渲染子树到 container 中，
+// legacy 遗留的，意思后期会修改这里？
 function legacyRenderSubtreeIntoContainer(
   parentComponent: ?React$Component<any, any>,
   children: ReactNodeList,
   container: Container,
-  forceHydrate: boolean,
+  forceHydrate: boolean, // ! ?
   callback: ?Function,
 ) {
   if (__DEV__) {
@@ -184,8 +186,7 @@ function legacyRenderSubtreeIntoContainer(
     warnOnInvalidCallback(callback === undefined ? null : callback, 'render');
   }
 
-  // TODO: Without `any` type, Flow says "Property cannot be accessed on any
-  // member of intersection type." Whyyyyyy.
+  // TODO: Without `any` type, Flow says "Property cannot be accessed on any member of intersection type." Whyyyyyy.
   let root: RootType = (container._reactRootContainer: any);
   let fiberRoot;
   if (!root) {
@@ -195,6 +196,7 @@ function legacyRenderSubtreeIntoContainer(
       forceHydrate,
     );
     fiberRoot = root._internalRoot;
+    // If callback exists
     if (typeof callback === 'function') {
       const originalCallback = callback;
       callback = function() {
@@ -305,6 +307,7 @@ export function render(
       );
     }
   }
+
   return legacyRenderSubtreeIntoContainer(
     null,
     element,

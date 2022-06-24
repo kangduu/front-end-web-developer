@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { Spin } from "antd";
 import Demo from "../pages/case";
 import ReactPage from "../pages/react";
-
-export default class extends Component {
+export default class CaRouter extends Component {
   render() {
-    // TODO： fallback 组件
+    console.log(this.props.children);
     return (
-      <React.Suspense fallback="加载中...">
+      <React.Suspense fallback={<Spin spinning={true} />}>
         <Switch>
           <Route exact path="/">
             <Redirect to="/react" />
@@ -16,7 +16,6 @@ export default class extends Component {
             path="/case"
             children={(params) => {
               const { match, ...rest } = params;
-              console.log(params);
               if (match.isExact) return <Demo {...rest} />;
               return <Redirect to={match.url} />;
             }}

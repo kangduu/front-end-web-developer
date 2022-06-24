@@ -9,13 +9,13 @@ const MemoDemo = React.lazy(() => import("@components/MemoDemo"));
 export default function ReactPage() {
   return (
     <>
-      <HookUseLayoutEffect />
+      {/* <HookUseLayoutEffect />
 
       <h3>【性能优化】使用memo或PureComponent前的思考</h3>
       <MemoDemo />
 
       <h3>Automatic Batching</h3>
-      <AutomaticBatching />
+      <AutomaticBatching /> */}
     </>
   );
 }

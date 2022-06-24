@@ -5,6 +5,8 @@ import NavBar from "@routes/nav";
 import Pages from "@routes";
 import "@styles/index.less";
 
+console.log(ReactDOM.render)
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>

@@ -3,11 +3,13 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { Spin } from "antd";
 import Demo from "../pages/case";
 import ReactPage from "../pages/react";
+import Transition from "../pages/transition/Transition";
 export default class CaRouter extends Component {
   render() {
     console.log(this.props.children);
     return (
       <React.Suspense fallback={<Spin spinning={true} />}>
+        <Transition />
         <Switch>
           <Route exact path="/">
             <Redirect to="/react" />

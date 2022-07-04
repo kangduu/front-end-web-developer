@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -13,7 +13,8 @@
     "react-copy-to-clipboard": "^5.0.4",
     "react-dom": "^16.14.0",
     "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^1.0.7",

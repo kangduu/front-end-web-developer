@@ -1,31 +1,38 @@
 import React, { Component } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Spin } from "antd";
-import Demo from "../pages/case";
-import ReactPage from "../pages/react";
-import Transition from "../pages/transition/Transition";
+// import Demo from "../pages/case";
+// import ReactPage from "../pages/react";
+import ReactTransitionGroup from "../pages/transition";
+import FormList from "../components/FormList";
 export default class CaRouter extends Component {
   render() {
-    console.log(this.props.children);
     return (
       <React.Suspense fallback={<Spin spinning={true} />}>
-        <Transition />
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/react" />
-          </Route>
-          <Route
+        <Routes>
+          <Route path="/" element={<ReactTransitionGroup />}>
+            <Route path="form" element={<FormList />} />
+            {/* <Route
             path="/case"
             children={(params) => {
               const { match, ...rest } = params;
               if (match.isExact) return <Demo {...rest} />;
               return <Redirect to={match.url} />;
             }}
-          />
-          <Route exact path="/react">
+            />
+            <Route exact path="/react">
             <ReactPage />
+          </Route> */}
+            <Route
+              path="*"
+              element={
+                <main style={{ padding: 10 }}>
+                  <p>Nothing!</p>
+                </main>
+              }
+            />
           </Route>
-        </Switch>
+        </Routes>
       </React.Suspense>
     );
   }

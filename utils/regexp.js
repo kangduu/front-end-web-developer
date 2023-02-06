@@ -1,3 +1,6 @@
+// 同时包含数字和字母
+const NumAndWord = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{3,20}$/g
+
 // 检验手机号   正则表达式  /^1[3|4|5|7|8][0-9]{9}$/
 function checkPhone(phone) {
   var reg = /^1[3|4|5|7|8][0-9]{9}$/;
